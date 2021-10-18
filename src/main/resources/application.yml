@@ -1,0 +1,34 @@
+# 服务配置
+server:
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+
+# spring配置
+spring:
+  # 国际化信息
+  messages:
+    basename: i18n/**/*
+  profiles:
+    active: dev
+  devtools:
+    restart:
+      enabled: true
+  application:
+    name: ky
+  mvc:
+    static-path-pattern: /ky
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+
+# MyBatis配置
+#mybatis:
+#  mapperLocations: classpath*:mapper/**/*Mapper.xml
+
+#编号设置
+orderNo:
+  datacenterId: 1
+  machineId: 1
+
+
