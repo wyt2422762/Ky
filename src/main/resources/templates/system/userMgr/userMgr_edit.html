@@ -30,10 +30,13 @@
             <input type="text" name="username" lay-verify="required" placeholder=""
                    class="layui-input" autocomplete="off" th:value="${user.username}"/>
           </td>
-          <th>加密狗序列号</th>
+          <th>所属学院</th>
           <td>
-            <input type="text" name="jmgxlh" lay-verify="required" placeholder=""
-                   class="layui-input" autocomplete="off" />
+            <select name="fk_xyid" lay-filter="xy">
+              <option value="">请选择学院</option>
+              <option th:each="xy,stat:${xyList}" th:value="${xy.id}"
+                      th:text="${xy.name}" th:selected="${xy.id == user.fk_xyid}"></option>
+            </select>
           </td>
         </tr>
         <tr>
@@ -62,10 +65,11 @@
         </tr>
         </tbody>
       </table>
-      <input type="hidden" name="roleType" th:value="1"/>
+      <input type="hidden" name="roleType" th:value="${user.roleType}"/>
       <input type="hidden" name="fk_xtglid" th:value="${user.fk_xtglid}">
       <input type="hidden" name="id" th:value="${user.id}">
       <input type="hidden" name="fk_qybm" th:value="${user.fk_qybm}">
+      <input type="hidden" name="addtime" th:value="${user.addtime}">
     </div>
     <button style="display:none;" lay-submit lay-filter="submitBut" class="sb"></button>
   </form>
@@ -96,19 +100,18 @@
       }
     });
 
-    form.on('submit(submitBut)', function (data1) {
+    form.on('submit(submitBut)', function (data) {
       let user = {};
-      user['id'] = data1.field.id;
-      user['fk_xtglid'] = data1.field.fk_xtglid;
-      user['fk_jsid'] = data1.field.fk_jsid;
-      user['is_lock'] = !!data1.field.is_lock;
-      user['lxdh'] = data1.field.lxdh;
-      user['lxr'] = data1.field.lxr;
-      user['password'] = data1.field.password;
-      user['roleType'] = "1";
-      user['username'] = data1.field.username;
-
-      user['fk_qybm'] = data1.field.fk_qybm;
+      for (let key in data.field) {
+        let val = data.field[key];
+        if (val) {
+          if(key === 'is_lock') {
+            user['is_lock'] = !!data.field.is_lock;
+          } else {
+            user[key] = val;
+          }
+        }
+      }
 
       let index = top.layer.getFrameIndex(window.name); //获取窗口索引
 

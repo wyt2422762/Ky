@@ -29,9 +29,13 @@
           <td>
             <input type="text" name="username" lay-verify="required" placeholder="" class="layui-input"/>
           </td>
-          <th>加密狗序列号</th>
+          <th>所属学院</th>
           <td>
-            <input type="text" name="jmgxlh" lay-verify="required" placeholder="" class="layui-input"/>
+            <select name="fk_xyid" lay-filter="xy">
+              <option value="">请选择学院</option>
+              <option th:each="xy,stat:${xyList}" th:value="${xy.id}"
+                      th:text="${xy.name}"></option>
+            </select>
           </td>
         </tr>
         <tr>
@@ -61,6 +65,7 @@
       </table>
       <input type="hidden" name="roleType" class="layui-input" th:value="1"/>
       <input type="hidden" name="fk_xtglid" th:value="${cuser.fk_xtglid}"/>
+      <input type="hidden" name="fk_qybm" th:value="${cuser.fk_qybm}"/>
     </div>
     <button style="display:none;" lay-submit lay-filter="submitBut" class="sb"></button>
   </form>
@@ -72,8 +77,7 @@
 <script type="text/javascript" th:src="@{/static/js/citys.js}"></script>
 
 <script th:inline="javascript">
-  const xtglid = [[${cuser.fk_xtglid}]];
-  const qybm = [[${cuser.fk_qybm}]];
+  const cuser = [[${cuser}]];
 
   layui.config({
     base: ctx + 'static/js/layuiExts/'
@@ -94,18 +98,18 @@
       }
     });
 
-    form.on('submit(submitBut)', function (data1) {
+    form.on('submit(submitBut)', function (data) {
       let user = {};
-      user['fk_jsid'] = data1.field.fk_jsid;
-      user['fk_xtglid'] = xtglid;
-      user['is_lock'] = !!data1.field.is_lock;
-      user['lxdh'] = data1.field.lxdh;
-      user['lxr'] = data1.field.lxr;
-      user['password'] = data1.field.password;
-      user['roleType'] = "1";
-      user['username'] = data1.field.username;
-
-      user['fk_qybm'] = qybm;
+      for (let key in data.field) {
+        let val = data.field[key];
+        if (val) {
+          if(key === 'is_lock') {
+            user['is_lock'] = !!data.field.is_lock;
+          } else {
+            user[key] = val;
+          }
+        }
+      }
 
       let index = top.layer.getFrameIndex(window.name); //获取窗口索引
 

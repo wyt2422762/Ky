@@ -2,7 +2,7 @@ package com.fdkj.ky.controller.sys;
 
 import com.fdkj.ky.annotation.Log;
 import com.fdkj.ky.api.model.system.Xtrz;
-import com.fdkj.ky.api.util.LogApi;
+import com.fdkj.ky.api.util.sys.LogApi;
 import com.fdkj.ky.base.CusResponseBody;
 import com.fdkj.ky.base.Page;
 import com.fdkj.ky.constant.Constants;

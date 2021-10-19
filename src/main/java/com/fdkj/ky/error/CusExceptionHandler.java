@@ -3,11 +3,13 @@ package com.fdkj.ky.error;
 import com.fdkj.ky.base.CusResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 
 /**
  * 统一错误处理
@@ -16,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @ControllerAdvice
 public class CusExceptionHandler {
+    private final String ERR_VALID = "参数校验失败";
+
 
     /**
      * 判断是否是Ajax请求
@@ -46,6 +50,48 @@ public class CusExceptionHandler {
             modelAndView.setViewName("error");
             modelAndView.addObject("errorMsg", e.getMessage());
             modelAndView.addObject("errorCode", e.getCode());
+            return modelAndView;
+        }
+    }
+
+    /**
+     * 处理参数验证异常
+     *
+     * @param req req
+     * @param e   异常
+     * @return ret
+     */
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public Object ValidException(HttpServletRequest req, MethodArgumentNotValidException e) {
+        if (isAjax(req)) {
+            CusResponseBody cusResponseBody = CusResponseBody.error(HttpStatus.BAD_REQUEST.value(), ERR_VALID);
+            return new ResponseEntity<>(cusResponseBody, HttpStatus.BAD_REQUEST);
+        } else {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("error");
+            modelAndView.addObject("errorMsg", e.getMessage());
+            modelAndView.addObject("errorCode", HttpStatus.BAD_REQUEST.value());
+            return modelAndView;
+        }
+    }
+
+    /**
+     * 处理参数验证异常
+     *
+     * @param req req
+     * @param e   异常
+     * @return ret
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Object constraintViolationExceptionHandler(HttpServletRequest req, ConstraintViolationException e) {
+        if (isAjax(req)) {
+            CusResponseBody cusResponseBody = CusResponseBody.error(HttpStatus.BAD_REQUEST.value(), ERR_VALID);
+            return new ResponseEntity<>(cusResponseBody, HttpStatus.BAD_REQUEST);
+        } else {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("error");
+            modelAndView.addObject("errorMsg", e.getMessage());
+            modelAndView.addObject("errorCode", HttpStatus.BAD_REQUEST.value());
             return modelAndView;
         }
     }

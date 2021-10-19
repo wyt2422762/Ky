@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 /**
@@ -22,10 +23,10 @@ public class BaseApi {
     private static final Logger logger = LoggerFactory.getLogger(BaseApi.class);
 
     @Value("${bus.api.baseUrl}")
-    String baseUrl;
+    public String baseUrl;
 
     @Autowired
-    RestTemplate restTemplate;
+    public RestTemplate restTemplate;
 
     /**
      * 获取用户token
@@ -70,20 +71,23 @@ public class BaseApi {
      *
      * @param request req
      * @return 用户user
-     * @throws Exception err
      */
-    public User getUserFromCookie(HttpServletRequest request) throws Exception {
-        User user = null;
-        //获取当前登陆的用户信息(从cookie中获取)
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("user".equals(cookie.getName())) {
-                    user = JSONObject.parseObject(URLDecoder.decode(cookie.getValue(), "utf-8"), User.class);
+    public User getUserFromCookie(HttpServletRequest request)  {
+        try {
+            User user = null;
+            //获取当前登陆的用户信息(从cookie中获取)
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("user".equals(cookie.getName())) {
+                        user = JSONObject.parseObject(URLDecoder.decode(cookie.getValue(), "utf-8"), User.class);
+                    }
                 }
             }
+            return user;
+        } catch (Exception e) {
+            throw new BusinessException("获取用户失败", HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
-        return user;
     }
 
     /**
@@ -111,7 +115,7 @@ public class BaseApi {
      * @param request req
      * @return res
      */
-    HttpHeaders getHttpHeaders(HttpServletRequest request) {
+    public HttpHeaders getHttpHeaders(HttpServletRequest request) {
         //请求头
         HttpHeaders headers = new HttpHeaders();
         headers.add("Bearer", getTokenFromCookie(request));

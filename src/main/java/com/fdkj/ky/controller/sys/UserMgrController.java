@@ -4,11 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.fdkj.ky.annotation.Log;
 import com.fdkj.ky.api.model.system.Role;
 import com.fdkj.ky.api.model.system.User;
-import com.fdkj.ky.api.util.RoleApi;
-import com.fdkj.ky.api.util.UserApi;
+import com.fdkj.ky.api.model.system.Xy;
+import com.fdkj.ky.api.util.sys.RoleApi;
+import com.fdkj.ky.api.util.sys.UserApi;
+import com.fdkj.ky.api.util.sys.XyApi;
 import com.fdkj.ky.base.CusResponseBody;
 import com.fdkj.ky.base.Page;
 import com.fdkj.ky.constant.Constants;
+import com.fdkj.ky.constant.CreateGroup;
+import com.fdkj.ky.constant.EditGroup;
 import com.fdkj.ky.error.BusinessException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,9 +43,10 @@ public class UserMgrController {
 
     @Autowired
     private UserApi userApi;
-
     @Autowired
     private RoleApi roleApi;
+    @Autowired
+    private XyApi xyApi;
 
     @RequestMapping("Index")
     public ModelAndView index(HttpServletRequest request, @RequestParam(value = "opts", required = false) List<String> opts) throws Exception {
@@ -92,6 +98,9 @@ public class UserMgrController {
         //2. 获取角色信息
         List<Role> allRoleList = roleApi.getAllRoleList(request);
         request.setAttribute("roleList", allRoleList);
+        //3. 获取学院信息
+        List<Xy> xyList = xyApi.getXyList(request, null, null);
+        request.setAttribute("xyList", xyList);
         return new ModelAndView("system/userMgr/userMgr_add");
     }
 
@@ -104,7 +113,10 @@ public class UserMgrController {
         //2. 获取角色信息
         List<Role> allRoleList = roleApi.getAllRoleList(request);
         request.setAttribute("roleList", allRoleList);
-        //5. 对应的用户信息
+        //3. 获取学院信息
+        List<Xy> xyList = xyApi.getXyList(request, null, null);
+        request.setAttribute("xyList", xyList);
+        //4. 对应的用户信息
         User user = userApi.getUserDetail(request, id);
         request.setAttribute("user", user);
         return new ModelAndView("system/userMgr/userMgr_edit");
@@ -114,16 +126,16 @@ public class UserMgrController {
      * 添加用户
      *
      * @param request req
-     * @param json    请求体
+     * @param user    请求体
      * @return res
      */
     @RequestMapping("addUser")
     @ResponseBody
     @Log(module = "用户管理", desc = "添加用户", optType = Constants.OptType.ADD)
     public ResponseEntity<CusResponseBody> addUser(HttpServletRequest request,
-                                                   @RequestBody JSONObject json) {
+                                                   @Validated(CreateGroup.class) @RequestBody User user) {
         try {
-            userApi.addUser(request, json);
+            userApi.addUser(request, user.toJson());
             //构造返回数据
             CusResponseBody cusResponseBody = CusResponseBody.success("添加用户成功");
             return new ResponseEntity<>(cusResponseBody, HttpStatus.OK);
@@ -137,16 +149,16 @@ public class UserMgrController {
      * 编辑用户
      *
      * @param request req
-     * @param json    请求体
+     * @param user    请求体
      * @return res
      */
     @RequestMapping("editUser")
     @ResponseBody
     @Log(module = "用户管理", desc = "编辑用户", optType = Constants.OptType.EDIT)
     public ResponseEntity<CusResponseBody> editUser(HttpServletRequest request,
-                                                    @RequestBody JSONObject json) {
+                                                    @Validated(EditGroup.class) @RequestBody User user) {
         try {
-            userApi.editUser(request, json);
+            userApi.editUser(request, user.toJson());
             //构造返回数据
             CusResponseBody cusResponseBody = CusResponseBody.success("更新用户成功");
             return new ResponseEntity<>(cusResponseBody, HttpStatus.OK);

@@ -2,7 +2,7 @@ package com.fdkj.ky.controller;
 
 import com.fdkj.ky.annotation.Log;
 import com.fdkj.ky.api.model.system.View_PT_XT_MK_Model;
-import com.fdkj.ky.api.util.SystemApi;
+import com.fdkj.ky.api.util.sys.SystemApi;
 import com.fdkj.ky.base.CusResponseBody;
 import com.fdkj.ky.constant.Constants;
 import com.fdkj.ky.error.BusinessException;

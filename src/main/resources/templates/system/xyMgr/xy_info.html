@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-学院详情</title>
+</head>
+<body>
+<div style="padding: 20px;">
+  <form class="layui-form" method="post" id="xy_Form" lay-filter="xy_Form">
+    <div class="layui-form">
+      <table class="layui-table">
+        <tbody>
+        <tr>
+          <th>学院名称</th>
+          <td>
+            <input type="text" readonly name="name" autocomplete="off" lay-verify="required" placeholder="请输入学院名称" class="layui-input"/>
+          </td>
+          <th>学院编码</th>
+          <td>
+            <input type="text" readonly name="code" autocomplete="off" placeholder="请输入学院编码" class="layui-input"/>
+          </td>
+        </tr>
+        <tr>
+          <th>学院院长</th>
+          <td>
+            <input type="text" readonly name="yz" autocomplete="off" lay-verify="required" placeholder="请输入学院院长" class="layui-input"/>
+          </td>
+          <th>备注</th>
+          <td>
+            <textarea readonly name="remark" placeholder="请输入备注" class="layui-textarea"></textarea>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <input type="hidden" name="id" />
+    <input type="hidden" name="addtime" />
+    <input type="hidden" name="fk_xtglid" />
+    <input type="hidden" name="fk_qybm" />
+  </form>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/sysMgr/xy/xy.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+  const id = [[${id}]];
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form'], function () {
+    //let element = layui.element;
+    //let laydate = layui.laydate;
+    let form = layui.form;
+    //let table = layui.table;
+
+    getXy(id);
+
+    //获取学院详情
+    function getXy(id){
+      XY.getDetail(id, function (data) {
+        xy = data.data;
+        form.val("xy_Form", xy);
+        return false;
+      });
+      return false;
+    }
+
+  });
+</script>
+
+</body>
+</html>

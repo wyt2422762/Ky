@@ -41,14 +41,16 @@ const CookieFunc = {
 //iframe相关的方法
 const IframeFunc = {
   autoHeight: function (iframeObj) {
-    let that = $(iframeObj)[0];
-    let bHeight = that.contentWindow.document.body.scrollHeight;
-    let dHeight = that.contentWindow.document.documentElement.scrollHeight;
-    let height = Math.max(bHeight, dHeight);
-    /*console.log("bHeight = " + bHeight);
-    console.log("dHeight = " + dHeight);
-    console.log("height = " + height);*/
-    $(that).height(height);
+    try {
+      let that = $(iframeObj)[0];
+      let bHeight = that.contentWindow.document.body.scrollHeight;
+      let dHeight = that.contentWindow.document.documentElement.scrollHeight;
+      let height = Math.max(bHeight, dHeight);
+      /*console.log("bHeight = " + bHeight);
+      console.log("dHeight = " + dHeight);
+      console.log("height = " + height);*/
+      $(that).height(height);
+    } catch (e) {}
   }
 };
 

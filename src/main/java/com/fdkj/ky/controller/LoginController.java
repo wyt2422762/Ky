@@ -3,7 +3,7 @@ package com.fdkj.ky.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.fdkj.ky.annotation.Log;
 import com.fdkj.ky.api.model.system.User;
-import com.fdkj.ky.api.util.SystemApi;
+import com.fdkj.ky.api.util.sys.SystemApi;
 import com.fdkj.ky.base.CusResponseBody;
 import com.fdkj.ky.constant.Constants;
 import com.fdkj.ky.error.BusinessException;

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fdkj.ky.annotation.Log;
 import com.fdkj.ky.api.model.system.User;
 import com.fdkj.ky.api.model.system.Zd;
-import com.fdkj.ky.api.util.DictApi;
+import com.fdkj.ky.api.util.sys.DictApi;
 import com.fdkj.ky.base.CusResponseBody;
 import com.fdkj.ky.constant.Constants;
 import com.fdkj.ky.error.BusinessException;
