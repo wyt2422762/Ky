@@ -1,0 +1,19 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="menu">
+  <ul class="layui-nav layui-bg-molv" lay-shrink="all" lay-filter="topMenu"
+      style="padding:0 50px;left:200px!important;">
+  <ul th:each="menu,index:${menuManagers}">
+    <li th:if="${#lists.isEmpty(menu.subMenuManager)}">
+      <p th:text="${menu.menu_name}"></p>
+    </li>
+    <li th:if="not ${#lists.isEmpty(menu.subMenuManager)}" >
+      <p th:text="${menu.menu_name}"></p>
+      <th:block  th:include="this::row(${menu.subMenuManager})"></th:block>
+    </li>
+  </ul>
+</th:block>
+
+</body>
+</html>

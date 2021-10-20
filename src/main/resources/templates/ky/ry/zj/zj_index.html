@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-专家人才管理</title>
+</head>
+<body>
+
+<input type="hidden" id="opts" th:value="${optsStr}"/>
+
+<div class="layui-tab-item layui-show" style="padding: 10px;">
+  <div id="LAY_preview">
+    <fieldset class="layui-elem-field layui-field-title">
+      <legend>专家人才列表</legend>
+    </fieldset>
+
+    <!-- 方案列表 -->
+    <div style="padding: 10px;">
+      <div>
+        <form class="layui-form" id="searchForm">
+          <div class="layui-form-item">
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <input type="text" id="zgh" name="zgh" placeholder="请输入专家职工号"
+                       autocomplete="off" class="layui-input"/>
+              </div>
+            </div>
+
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <input type="text" id="name" name="name" placeholder="请输入专家姓名"
+                       autocomplete="off" class="layui-input"/>
+              </div>
+            </div>
+
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <button class="layui-btn layui-btn-danger btn_search" lay-submit lay-filter="formDemo1"
+                        style="margin-left:15px;">
+                  <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="layui-inline" style="float: right;">
+              <button th:if="${#lists.contains(opts, 'add')}" id="addZj" class="layui-btn layui-btn-normal"
+                      style="margin-left:15px;">新建专家人才
+              </button>
+            </div>
+          </div>
+
+        </form>
+
+        <div class="clearfix"></div>
+
+      </div>
+
+      <table id="zjTable" class="layui-table" lay-filter="zjTable"></table>
+
+      <script type="text/html" id="zjTableToolBar">
+        <a th:if="${#lists.contains(opts, 'show')}" class="layui-btn layui-btn-xs"
+           lay-event="mx">详情</a>
+        <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-normal layui-btn-xs"
+           lay-event="edit">编辑</a>
+        <a th:if="${#lists.contains(opts, 'del')}" class="layui-btn layui-btn-danger layui-btn-xs"
+           lay-event="del">删除</a>
+      </script>
+
+    </div>
+  </div>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/ky/ry/zj.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+  const opts = [[${opts}]];
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form'], function () {
+    //let element = layui.element;
+    let laydate = layui.laydate;
+    let form = layui.form;
+    let table = layui.table;
+
+    getInitData();
+
+    //获取方案管理列表
+    function getTableData(params) {
+      let url = ctx + 'CZF/KYDW/ZJRC/getList';
+      //获取表格数据
+      table.render({
+        elem: '#zjTable',
+        title: '专家人才列表',
+        url: url, //数据接口
+        where: params, //请求参数
+        page: {
+          layout: ['prev', 'page', 'next', 'skip', 'count']
+        },
+        // page: true,
+        limit: 10,
+        //limits: [10, 20, 50],
+        cols: [[ //表头
+          {field: 'zgh', title: '职工号'},
+          {field: 'name', title: '姓名'},
+          {field: 'name_en', title: '英文名'},
+          {field: 'rsdw', title: "人事单位"},
+          {field: 'phone', title: "手机号"},
+          {field: 'zc', title: "职称"},
+          {fixed: 'right', align: 'center', title: '操作', toolbar: '#zjTableToolBar', width: 250}
+        ]],
+        parseData: function (res) { //res 即为原始返回的数据
+          return {
+            "code": res.success ? 0 : 1, //解析接口状态
+            "msg": res.msg, //解析提示文本
+            "count": res.data.totalRecord, //解析数据长度
+            "data": res.data.dataList //解析数据列表
+          };
+        }
+      });
+    }
+
+    //工具条事件
+    table.on('tool(zjTable)', function (obj) {
+      let data = obj.data; //获得当前行数据
+      let layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+      let tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+
+      if (layEvent === 'del') { //删除
+        top.layer.confirm('确定要删除该专家人才？', {
+          btn: ['确定', '取消'] //按钮
+        }, function () {
+          ZJ.del(data.id, function () {
+            window.location.reload();
+            return false;
+          });
+        }, function () {
+        });
+      } else if (layEvent === 'edit') { //编辑
+        let url = ctx + "CZF/KYDW/ZJRC/toEdit/" + data.id;
+        let title = '编辑专家人才';
+        showAeDialog(url, title);
+      } else if (layEvent === 'mx') { //详情
+        let url = ctx + "CZF/KYDW/ZJRC/toInfo/" + data.id;
+        let title = '专家人才详情';
+        showInfoDialog(url, title);
+      }
+    });
+
+    //添加按钮事件
+    $("#addZj").on('click', function () {
+      let url = ctx + "CZF/KYDW/ZJRC/toAdd";
+      let title = '添加专家人才';
+      showAeDialog(url, title);
+      return false;
+    });
+
+    //显示添加修改弹出框
+    function showAeDialog(url, title, callBack) {
+      top.layer.open({
+        type: 2,
+        content: url,
+        title: title,
+        closeBtn: 1,
+        shadeClose: false,
+        area: ['1200px', '90%'],
+        btn: ['确定', '取消'],
+        yes: function (index, layero) {
+          debugger;
+          let body = top.layer.getChildFrame('body', index);
+          let frm = $(body).find("form#zj_Form");
+          $(frm).find("button.sb").click();
+          return false;
+        },
+        end: function (index) {
+          top.layer.close(index);
+          if (callBack) {
+            callBack();
+          }
+        }
+      });
+      return false;
+    }
+
+    //显示详情弹出框
+    function showInfoDialog(url, title, callBack) {
+      top.layer.open({
+        type: 2,
+        content: url,
+        title: title,
+        closeBtn: 1,
+        shadeClose: false,
+        area: ['1200px', '90%']
+      });
+      return false;
+    }
+
+    //搜索按钮事件
+    form.on('submit(formDemo1)', function (data) {
+      let zgh = data.field.zgh;
+      let name = data.field.name;
+
+      let params = {};
+      if (zgh) {
+        params['zgh'] = zgh;
+      }
+      if (name) {
+        params['name'] = name;
+      }
+
+      getTableData(params);
+      return false;
+    });
+
+    //获取初始数据
+    function getInitData() {
+      let params = {};
+      getTableData(params);
+      return false;
+    }
+  });
+</script>
+</body>
+</html>

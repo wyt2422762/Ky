@@ -100,12 +100,12 @@
                 if(opts.indexOf("add") > -1) {
                   str.push("<a lay-filter=\"add\">添加</a>");
                 }
-                if(opts.indexOf("add") > -1) {
+                if(opts.indexOf("update") > -1) {
                   str.push("<a lay-filter=\"edit\">编辑</a>");
                 }
                 return str.join(" | ");
               } else {
-                if(opts.indexOf("edit") > -1) {
+                if(opts.indexOf("update") > -1) {
                   return "<a lay-filter=\"edit\">编辑</a>"
                 }
                 return ""

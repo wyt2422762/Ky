@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-专家人才详情</title>
+</head>
+<body>
+<div style="padding: 20px;">
+  <form class="layui-form" method="post" id="zj_Form" lay-filter="zj_Form">
+    <div class="layui-form">
+      <table class="layui-table">
+        <tbody>
+        <tr>
+          <th>职工号</th>
+          <td>
+            <input type="text" readonly name="zgh" autocomplete="off" lay-verify="required" placeholder="请输入职工号" class="layui-input"/>
+          </td>
+          <th>姓名</th>
+          <td>
+            <input type="text" readonly name="name" autocomplete="off" lay-verify="required" placeholder="请输入姓名" class="layui-input"/>
+          </td>
+          <th>英文名</th>
+          <td>
+            <input type="text" readonly name="name_en" autocomplete="off" placeholder="请输入英文名" class="layui-input"/>
+          </td>
+          <th>所属科研机构</th>
+          <td>
+            <input type="text" readonly name="fk_jgid" autocomplete="off" placeholder="请输入fk_jgid" class="layui-input"/>
+          </td>
+        </tr>
+        <tr>
+          <th>手机号</th>
+          <td>
+            <input type="text" readonly name="phone" autocomplete="off" placeholder="请输入手机号" class="layui-input"/>
+          </td>
+          <th>电话</th>
+          <td>
+            <input type="text" readonly name="tel" autocomplete="off" placeholder="请输入电话" class="layui-input"/>
+          </td>
+          <th>邮箱</th>
+          <td>
+            <input type="text" readonly name="email" autocomplete="off" placeholder="请输入邮箱" class="layui-input"/>
+          </td>
+          <th>qq</th>
+          <td>
+            <input type="text" readonly name="qq" autocomplete="off" placeholder="请输入qq" class="layui-input"/>
+          </td>
+        </tr>
+        <tr>
+          <th>身份证号</th>
+          <td>
+            <input type="text" readonly name="idNo" autocomplete="off" placeholder="请输入身份证号" class="layui-input"/>
+          </td>
+          <th>性别</th>
+          <td>
+            <select name="gender" disabled>
+              <option value="" selected>请选择性别</option>
+              <option th:each="zd,stat:${dict_gender}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+          <th>生日</th>
+          <td>
+            <input type="text" readonly name="birth" autocomplete="off" placeholder="请输入生日" class="layui-input"/>
+          </td>
+          <th>导师类型</th>
+          <td>
+            <select name="tutor" disabled>
+              <option value="" selected>请选择导师类型</option>
+              <option th:each="zd,stat:${dict_tutor}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>职称</th>
+          <td>
+            <input type="text" readonly name="zc" autocomplete="off" placeholder="请输入职称" class="layui-input"/>
+          </td>
+          <th>学历</th>
+          <td>
+            <select name="edu" disabled>
+              <option value="" selected>请选择学历</option>
+              <option th:each="zd,stat:${dict_edu}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+          <th>学位</th>
+          <td>
+            <select name="degree" disabled>
+              <option value="" selected>请选择学位</option>
+              <option th:each="zd,stat:${dict_degree}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+          <th>毕业学校信息</th>
+          <td>
+            <input type="text" readonly name="school" autocomplete="off" placeholder="请输入毕业学校信息" class="layui-input"/>
+          </td>
+        </tr>
+        <tr>
+          <th>研究方向</th>
+          <td>
+            <input type="text" readonly name="yjfx" autocomplete="off" placeholder="请输入研究方向" class="layui-input"/>
+          </td>
+          <th>学科门类</th>
+          <td>
+            <input type="text" readonly name="xkml" autocomplete="off" placeholder="请输入学科门类" class="layui-input"/>
+          </td>
+          <th>荣誉称号</th>
+          <td>
+            <input type="text" readonly name="rych" autocomplete="off" placeholder="请输入荣誉称号" class="layui-input"/>
+          </td>
+          <th>学术特长</th>
+          <td>
+            <input type="text" readonly name="xstc" autocomplete="off" placeholder="请输入学术特长" class="layui-input"/>
+          </td>
+        </tr>
+        <tr>
+          <th>进修培训情况</th>
+          <td>
+            <input type="text" readonly name="train" autocomplete="off" placeholder="请输入进修培训情况" class="layui-input"/>
+          </td>
+          <th>出国经历</th>
+          <td>
+            <input type="text" readonly name="cgjl" autocomplete="off" placeholder="请输入出国经历" class="layui-input"/>
+          </td>
+          <th>兼职</th>
+          <td>
+            <input type="text" readonly name="jz" autocomplete="off" placeholder="请输入兼职" class="layui-input"/>
+          </td>
+          <th>备注</th>
+          <td>
+            <input type="text" readonly name="remark" autocomplete="off" placeholder="请输入备注" class="layui-input"/>
+          </td>
+        </tr>
+        <tr>
+          <th>人事单位</th>
+          <td>
+            <input type="text" readonly name="rsdw" autocomplete="off" placeholder="请输入人事单位" class="layui-input"/>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <input type="hidden" name="id" />
+    <input type="hidden" name="addtime" />
+    <input type="hidden" name="fk_xtglid" />
+    <input type="hidden" name="fk_qybm" />
+  </form>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/ky/ry/zj.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+  const id = [[${id}]];
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form'], function () {
+    //let element = layui.element;
+    //let laydate = layui.laydate;
+    let form = layui.form;
+    //let table = layui.table;
+
+    getZj(id);
+
+    //获取专家详情
+    function getZj(id){
+      ZJ.getDetail(id, function (data) {
+        zj = data.data;
+        form.val("zj_Form", zj);
+        return false;
+      });
+      return false;
+    }
+  });
+</script>
+
+</body>
+</html>

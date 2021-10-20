@@ -31,9 +31,8 @@ public class DictApi extends BaseApi {
      * @param pageNo   第几页
      * @param pageSize 每页显示的条数
      * @return 字典列表
-     * @throws Exception err
      */
-    public Page<Zd> getZdList(HttpServletRequest request, Map<String, Object> reqBody, Integer pageNo, Integer pageSize) throws Exception {
+    public Page<Zd> getZdList(HttpServletRequest request, Map<String, Object> reqBody, Integer pageNo, Integer pageSize) {
         User user = getUserFromCookie(request);
         //请求头
         HttpHeaders headers = getHttpHeaders(request);
@@ -81,9 +80,8 @@ public class DictApi extends BaseApi {
      * @param request  req
      * @param reqBody  请求体
      * @return 字典列表
-     * @throws Exception err
      */
-    public List<Zd> getZdList(HttpServletRequest request, Map<String, Object> reqBody) throws Exception {
+    public List<Zd> getZdList(HttpServletRequest request, Map<String, Object> reqBody) {
         User user = getUserFromCookie(request);
         //请求头
         HttpHeaders headers = getHttpHeaders(request);
@@ -120,9 +118,8 @@ public class DictApi extends BaseApi {
      * @param request req
      * @param id      字典id
      * @return 银行详情
-     * @throws Exception err
      */
-    public Zd getZdDetail(HttpServletRequest request, String id) throws Exception {
+    public Zd getZdDetail(HttpServletRequest request, String id) {
         User user = getUserFromCookie(request);
         //请求头
         HttpHeaders headers = getHttpHeaders(request);

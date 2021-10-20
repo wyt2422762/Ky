@@ -17,14 +17,21 @@ public class Constants {
      */
     public static class Dict {
         /**
-         * 项目类型
+         * 性别
          */
-        public static final String xmfl = "0FC44B9D-EF92-4069-8AE4-8EECFC9A8BD7";
-
+        public static final String GENDER = "a7dd235d-d5f2-401e-9374-ea9f93d9881a";
         /**
-         * 项目类型
+         * 导师类型
          */
-        public static final String xmxz = "692DF4CC-7D9E-4FDB-ACD0-79136B7C6DCF";
+        public static final String TUTOR = "51c66d4a-f376-4f00-907c-0ac9a243992f";
+        /**
+         * 学历
+         */
+        public static final String EDU = "d7e65fc5-af31-4d8c-a828-9145ad56ada0";
+        /**
+         * 学位
+         */
+        public static final String DEGREE = "012f4248-cec4-4df1-aae3-ea96a86f7420";
     }
 
     /**

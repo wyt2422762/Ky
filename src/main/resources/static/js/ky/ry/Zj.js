@@ -1,9 +1,9 @@
-const XY = {
-  //获取学院详情
+const ZJ = {
+  //获取专家人才详情
   getDetail: function (id, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/XYGL/getDetail/" + id,
+      url: ctx + "CZF/KYDW/ZJRC/getDetail/" + id,
       type: "GET",
       async: false,
       contentType: "application/json;charset=utf-8",
@@ -22,15 +22,15 @@ const XY = {
     });
     return false;
   },
-  //添加学院
-  add: function (xy, callBack) {
+  //添加专家人才
+  add: function (zj, callBack) {
     let loadi = top.layer.load();
     debugger;
     $.ajax({
-      url: ctx + "CZF/XYGL/add",
+      url: ctx + "CZF/KYDW/ZJRC/add",
       type: "POST",
       contentType: "application/json;charset=utf-8",
-      data: JSON.stringify(xy),
+      data: JSON.stringify(zj),
       success: function (data) {
         debugger;
         top.layer.close(loadi); //关闭弹出框
@@ -49,11 +49,11 @@ const XY = {
     });
     return false;
   },
-  //编辑学院
+  //编辑专家人才
   edit: function (xm, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/XYGL/edit",
+      url: ctx + "CZF/KYDW/ZJRC/edit",
       type: "PUT",
       contentType: "application/json;charset=utf-8",
       data: JSON.stringify(xm),
@@ -73,11 +73,11 @@ const XY = {
     });
     return false;
   },
-  //删除学院
+  //删除专家人才
   del: function (id, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/XYGL/del/" + id,
+      url: ctx + "CZF/KYDW/ZJRC/del/" + id,
       type: "DELETE",
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
