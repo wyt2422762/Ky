@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/common/header::header(~{::title},~{},~{})">
-  <title>科研系统-科研人员管理</title>
+  <title>科研系统-科研人员审核</title>
 </head>
 <body>
 
@@ -10,10 +10,10 @@
 <div class="layui-tab-item layui-show" style="padding: 10px;">
   <div id="LAY_preview">
     <fieldset class="layui-elem-field layui-field-title">
-      <legend>科研人员列表</legend>
+      <legend>待审核人员列表</legend>
     </fieldset>
 
-    <!-- 方案列表 -->
+    <!-- 人员列表 -->
     <div style="padding: 10px;">
       <div>
         <form class="layui-form" id="searchForm">
@@ -40,12 +40,6 @@
                 </button>
               </div>
             </div>
-
-            <div class="layui-inline" style="float: right;">
-              <button th:if="${#lists.contains(opts, 'add')}" id="addRy" class="layui-btn layui-btn-normal"
-                      style="margin-left:15px;">新建科研人员
-              </button>
-            </div>
           </div>
 
         </form>
@@ -59,13 +53,11 @@
       <script type="text/html" id="ryTableToolBar">
         <a th:if="${#lists.contains(opts, 'show')}" class="layui-btn layui-btn-xs"
            lay-event="mx">详情</a>
-        {{#  if('已保存' == d.zt || '退回' == d.zt){ }}
-        <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-normal layui-btn-xs"
-           lay-event="edit">编辑</a>
-        <a th:if="${#lists.contains(opts, 'del')}" class="layui-btn layui-btn-danger layui-btn-xs"
-           lay-event="del">删除</a>
+        {{#  if('提交' == d.zt || '待审核' == d.zt){ }}
         <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-warm layui-btn-xs"
-           lay-event="tj">提交</a>
+           lay-event="agree">同意</a>
+        <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-normal layui-btn-xs"
+           lay-event="back">退回</a>
         {{#  } }}
       </script>
 
@@ -133,73 +125,24 @@
       let layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
       let tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
-      if (layEvent === 'del') { //删除
-        top.layer.confirm('确定要删除该科研人员？', {
-          btn: ['确定', '取消'] //按钮
-        }, function () {
-          RY.del(data.id, function () {
-            window.location.reload();
-            return false;
-          });
-        }, function () {
+      if (layEvent === 'agree') { //同意
+        let url = ctx + "CZF/KYDW/KYRY/REVIEW/toReview/" + data.id;
+        let title = "通过人员";
+        showReviewDialog(url, title, function (index){
+          let body = top.layer.getChildFrame('body', index);
+          let frm = $(body).find("form#review_Form");
+          $(frm).find("button.ty").click();
         });
-      } else if (layEvent === 'edit') { //编辑
-        let url = ctx + "CZF/KYDW/KYRY/toEdit/" + data.id;
-        let title = '编辑科研人员';
-        showAeDialog(url, title);
-      } else if (layEvent === 'mx') { //详情
-        let url = ctx + "CZF/KYDW/KYRY/toInfo/" + data.id;
-        let title = '科研人员详情';
-        showInfoDialog(url, title);
-      } else if (layEvent === 'tj') { //提交
-        top.layer.confirm('确定要提交该科研人员？', {
-          btn: ['确定', '取消'] //按钮
-        }, function () {
-          RY.submit(data.id, function () {
-            window.location.reload();
-            return false;
-          });
-        }, function () {
+      } else if (layEvent === 'back') { //退回
+        let url = ctx + "CZF/KYDW/KYRY/REVIEW/toReview/" + data.id;
+        let title = "退回人员";
+        showReviewDialog(url, title, function (index){
+          let body = top.layer.getChildFrame('body', index);
+          let frm = $(body).find("form#review_Form");
+          $(frm).find("button.th").click();
         });
       }
     });
-
-    //添加按钮事件
-    $("#addRy").on('click', function () {
-      debugger;
-      let url = ctx + "CZF/KYDW/KYRY/toAdd";
-      let title = '添加科研人员';
-      showAeDialog(url, title);
-      return false;
-    });
-
-    //显示添加修改弹出框
-    function showAeDialog(url, title, callBack) {
-      top.layer.open({
-        type: 2,
-        content: url,
-        title: title,
-        closeBtn: 1,
-        shadeClose: false,
-        area: ['1200px', '90%'],
-        btn: ['确定', '取消'],
-        yes: function (index, layero) {
-          debugger;
-          let body = top.layer.getChildFrame('body', index);
-          let frm = $(body).find("form#ry_Form");
-          $(frm).find("button.sb").click();
-          return false;
-        },
-        end: function (index) {
-          top.layer.close(index);
-          if (callBack) {
-            callBack();
-          }
-        }
-      });
-      return false;
-    }
-
     //显示详情弹出框
     function showInfoDialog(url, title, callBack) {
       top.layer.open({
@@ -225,6 +168,7 @@
       if (name) {
         params['name'] = name;
       }
+      params['zt'] = '提交';
 
       getTableData(params);
       return false;
@@ -233,8 +177,33 @@
     //获取初始数据
     function getInitData() {
       let params = {};
+      params['zt'] = '提交';
       getTableData(params);
       return false;
+    }
+
+    //显示审核弹出框
+    function showReviewDialog(url, title, callBack) {
+      top.layer.open({
+        type: 2,
+        title: title,
+        closeBtn: 1,
+        shadeClose: false,
+        area: ['600px', '370px'],
+        content: url,
+        btn: ['确定', '取消'],
+        yes: function(index){
+          debugger;
+          if(callBack) {
+            callBack(index);
+          }
+          return false;
+        },
+        btn2: function(index){
+          top.layer.close(index);
+          return false;
+        }
+      });
     }
   });
 </script>

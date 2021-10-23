@@ -117,7 +117,7 @@ public class DictApi extends BaseApi {
      *
      * @param request req
      * @param id      字典id
-     * @return 银行详情
+     * @return 字典详情
      */
     public Zd getZdDetail(HttpServletRequest request, String id) {
         User user = getUserFromCookie(request);

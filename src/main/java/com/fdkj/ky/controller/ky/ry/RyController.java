@@ -2,7 +2,9 @@ package com.fdkj.ky.controller.ky.ry;
 
 import com.fdkj.ky.annotation.Log;
 import com.fdkj.ky.api.model.ky.ry.Ry;
+import com.fdkj.ky.api.model.ky.ry.RyReview;
 import com.fdkj.ky.api.model.ky.ry.Zj;
+import com.fdkj.ky.api.model.system.User;
 import com.fdkj.ky.api.model.system.Zd;
 import com.fdkj.ky.api.util.ky.ry.RyApi;
 import com.fdkj.ky.api.util.sys.DictApi;
@@ -13,6 +15,7 @@ import com.fdkj.ky.constant.CreateGroup;
 import com.fdkj.ky.constant.EditGroup;
 import com.fdkj.ky.controller.BaseController;
 import com.fdkj.ky.error.BusinessException;
+import com.fdkj.ky.utils.DateUtils;
 import com.fdkj.ky.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,7 +184,7 @@ public class RyController extends BaseController {
      * 获取科研人员列表(分页)
      *
      * @param request req
-     * @param zj      请求体
+     * @param ry      请求体
      * @param page    第几页
      * @param limit   每页显示的记录数
      * @return res
@@ -189,11 +192,11 @@ public class RyController extends BaseController {
     @RequestMapping("getList")
     @ResponseBody
     @Log(module = "科研人员", desc = "获取科研人员列表(分页)", optType = Constants.OptType.SELECT)
-    public ResponseEntity<CusResponseBody> getList(HttpServletRequest request, Zj zj,
+    public ResponseEntity<CusResponseBody> getList(HttpServletRequest request, Ry ry,
                                                    @RequestParam("page") Integer page, @RequestParam("limit") Integer limit) {
         try {
             //User cuser = xyApi.getUserFromCookie(request);
-            Page<Ry> ryList = ryApi.getRyList(request, null, zj.toJson(), page, limit);
+            Page<Ry> ryList = ryApi.getRyList(request, null, ry.toJson(), page, limit);
             //构造返回数据
             CusResponseBody cusResponseBody = CusResponseBody.success("获取科研人员列表成功", ryList);
             return new ResponseEntity<>(cusResponseBody, HttpStatus.OK);
@@ -283,6 +286,32 @@ public class RyController extends BaseController {
         } catch (Exception e) {
             log.error("删除科研人员失败", e);
             throw new BusinessException("删除科研人员失败: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e);
+        }
+    }
+
+    @RequestMapping("submit/{id}")
+    @ResponseBody
+    @Log(module = "科研人员", desc = "提交审核", optType = Constants.OptType.TO_REVIEW)
+    public ResponseEntity<CusResponseBody> submit(HttpServletRequest request, @PathVariable String id) {
+        try {
+            User cuser = ryApi.getUserFromCookie(request);
+            Ry ryDetail = ryApi.getRyDetail(request, id);
+            if (!(Constants.RYZT.YBC.equals(ryDetail.getZt()) || Constants.RYZT.TH.equals(ryDetail.getZt()))) {
+                throw new BusinessException("人员状态变化，提交失败", HttpStatus.BAD_REQUEST.value());
+            }
+            //添加审核记录
+            RyReview ryReview = new RyReview();
+            ryReview.setFk_qybm(ryDetail.getFk_qybm()).setFk_ryid(ryDetail.getId())
+                    .setFk_userid(cuser.getId()).setShr(cuser.getUsername())
+                    .setFk_xtglid(ryDetail.getFk_xtglid()).setShzt(Constants.REVIEW_YPE.SUBMIT);
+            ryApi.shRy(request, ryReview.toJson());
+
+            //构造返回数据
+            CusResponseBody cusResponseBody = CusResponseBody.success("提交审核成功");
+            return new ResponseEntity<>(cusResponseBody, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("提交审核失败", e);
+            throw new BusinessException("提交审核失败: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), e);
         }
     }
 }

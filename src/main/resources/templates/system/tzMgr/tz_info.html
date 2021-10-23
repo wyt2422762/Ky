@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-通知详情</title>
+</head>
+<body>
+
+<div style="padding: 20px;">
+  <h2 style="text-align: center;" th:text="${tz.model.title}"></h2>
+  <div th:utext="${tz.model.content}"></div>
+  <hr>
+  <!-- 附件 -->
+  <div>
+    <table class="layui-table">
+      <tbody>
+        <tr th:each="fj,stat : ${tz.list}">
+          <td th:text="${fj.name}"></td>
+          <td>
+            <button th:attr="data-fjmc=${fj.name}, data-fjdz=${fj.path}" class='layui-btn layui-btn-xs fj-download'>下载</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="text-align: right;">
+    <span>
+      <span>发布时间:</span>
+      <span th:text="${tz.model.addtime}"></span>
+    </span>
+  </div>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/sysMgr/tz/tz.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/wangEditor.min.js}"></script>
+
+<script th:inline="javascript">
+  $(document).ready(function(){
+    $("tbody").on('click', 'button.fj-download', function () {
+      let path = $(this).attr("data-fjdz");
+      let name = $(this).attr("data-fjmc");
+      TZ.downloadFj(path, name);
+      return false;
+    });
+  });
+</script>
+
+</body>
+</html>

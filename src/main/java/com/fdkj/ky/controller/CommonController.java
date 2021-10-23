@@ -77,6 +77,7 @@ public class CommonController {
      * 通用上传请求
      */
     @RequestMapping("upload")
+    @ResponseBody
     @Log(module = "通用", desc = "上传文件", optType = Constants.OptType.UPLOAD)
     public ResponseEntity<CusResponseBody> uploadFile(MultipartFile file) {
         try {
@@ -164,7 +165,7 @@ public class CommonController {
     @RequestMapping("getRandomNo")
     @ResponseBody
     @Log(module = "通用", desc = "获取编号", optType = Constants.OptType.SELECT)
-    public ResponseEntity<CusResponseBody> getRandomNo(MultipartFile file) {
+    public ResponseEntity<CusResponseBody> getRandomNo() {
         try {
             long nextId = noUtil.getNextId();
             //构造返回数据

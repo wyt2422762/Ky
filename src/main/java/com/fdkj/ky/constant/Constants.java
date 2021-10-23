@@ -118,4 +118,49 @@ public class Constants {
          */
         public static final String CONFIRM = "确认";
     }
+
+    /**
+     * 人员状态
+     */
+    public static class RYZT {
+        /**
+         * 已保存
+         */
+        public static final String YBC = "已保存";
+
+        /**
+         * 提交
+         */
+        public static final String TJ = "提交";
+
+        /**
+         * 退回
+         */
+        public static final String TH = "退回";
+
+        /**
+         * 通过
+         */
+        public static final String TG = "通过";
+    }
+
+    /**
+     * 人员状态
+     */
+    public static class REVIEW_YPE {
+        /**
+         * 提交
+         */
+        public static final String SUBMIT = "提交";
+
+        /**
+         * 同意
+         */
+        public static final String AGREE = "通过";
+
+        /**
+         * 退回
+         */
+        public static final String BACK = "退回";
+    }
 }

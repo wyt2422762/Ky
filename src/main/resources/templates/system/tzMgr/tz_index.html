@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/common/header::header(~{::title},~{},~{})">
-  <title>科研系统-科研人员管理</title>
+  <title>科研系统-通知管理</title>
 </head>
 <body>
 
@@ -10,7 +10,7 @@
 <div class="layui-tab-item layui-show" style="padding: 10px;">
   <div id="LAY_preview">
     <fieldset class="layui-elem-field layui-field-title">
-      <legend>科研人员列表</legend>
+      <legend>通知列表</legend>
     </fieldset>
 
     <!-- 方案列表 -->
@@ -18,16 +18,10 @@
       <div>
         <form class="layui-form" id="searchForm">
           <div class="layui-form-item">
-            <div class="layui-inline">
-              <div class="layui-input-inline">
-                <input type="text" id="zgh" name="zgh" placeholder="请输入职工号"
-                       autocomplete="off" class="layui-input"/>
-              </div>
-            </div>
 
             <div class="layui-inline">
               <div class="layui-input-inline">
-                <input type="text" id="name" name="name" placeholder="请输入姓名"
+                <input type="text" id="title" name="title" placeholder="请输入通知标题"
                        autocomplete="off" class="layui-input"/>
               </div>
             </div>
@@ -42,8 +36,8 @@
             </div>
 
             <div class="layui-inline" style="float: right;">
-              <button th:if="${#lists.contains(opts, 'add')}" id="addRy" class="layui-btn layui-btn-normal"
-                      style="margin-left:15px;">新建科研人员
+              <button th:if="${#lists.contains(opts, 'add')}" id="addTz" class="layui-btn layui-btn-normal"
+                      style="margin-left:15px;">新建通知
               </button>
             </div>
           </div>
@@ -54,19 +48,15 @@
 
       </div>
 
-      <table id="ryTable" class="layui-table" lay-filter="ryTable"></table>
+      <table id="tzTable" class="layui-table" lay-filter="tzTable"></table>
 
-      <script type="text/html" id="ryTableToolBar">
+      <script type="text/html" id="tzTableToolBar">
         <a th:if="${#lists.contains(opts, 'show')}" class="layui-btn layui-btn-xs"
            lay-event="mx">详情</a>
-        {{#  if('已保存' == d.zt || '退回' == d.zt){ }}
         <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-normal layui-btn-xs"
            lay-event="edit">编辑</a>
         <a th:if="${#lists.contains(opts, 'del')}" class="layui-btn layui-btn-danger layui-btn-xs"
            lay-event="del">删除</a>
-        <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-warm layui-btn-xs"
-           lay-event="tj">提交</a>
-        {{#  } }}
       </script>
 
     </div>
@@ -75,7 +65,7 @@
 
 <div th:replace="/common/footer::footer()"></div>
 
-<script type="text/javascript" th:src="@{/static/js/ky/ry/ry.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/sysMgr/tz/tz.js}"></script>
 
 <script th:inline="javascript">
   const cuser = [[${cuser}]];
@@ -93,11 +83,11 @@
 
     //获取方案管理列表
     function getTableData(params) {
-      let url = ctx + 'CZF/KYDW/KYRY/getList';
+      let url = ctx + 'CZF/TZ/getList';
       //获取表格数据
       table.render({
-        elem: '#ryTable',
-        title: '科研人员列表',
+        elem: '#tzTable',
+        title: '通知列表',
         url: url, //数据接口
         where: params, //请求参数
         page: {
@@ -107,14 +97,9 @@
         limit: 10,
         //limits: [10, 20, 50],
         cols: [[ //表头
-          {field: 'zgh', title: '职工号'},
-          {field: 'name', title: '姓名'},
-          {field: 'name_en', title: '英文名'},
-          {field: 'rsdw', title: "人事单位"},
-          {field: 'phone', title: "手机号"},
-          {field: 'zc', title: "职称"},
-          {field: 'zt', title: "状态"},
-          {fixed: 'right', align: 'center', title: '操作', toolbar: '#ryTableToolBar', width: 250}
+          {field: 'title', title: '通知标题'},
+          {field: 'addtime', title: '发布时间'},
+          {fixed: 'right', align: 'center', title: '操作', toolbar: '#tzTableToolBar', width: 250}
         ]],
         parseData: function (res) { //res 即为原始返回的数据
           return {
@@ -128,47 +113,42 @@
     }
 
     //工具条事件
-    table.on('tool(ryTable)', function (obj) {
+    table.on('tool(tzTable)', function (obj) {
       let data = obj.data; //获得当前行数据
       let layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
       let tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
       if (layEvent === 'del') { //删除
-        top.layer.confirm('确定要删除该科研人员？', {
+        top.layer.confirm('确定要删除该通知？', {
           btn: ['确定', '取消'] //按钮
         }, function () {
-          RY.del(data.id, function () {
+          TZ.del(data.id, function () {
             window.location.reload();
             return false;
           });
         }, function () {
         });
       } else if (layEvent === 'edit') { //编辑
-        let url = ctx + "CZF/KYDW/KYRY/toEdit/" + data.id;
-        let title = '编辑科研人员';
+        let url = ctx + "CZF/TZ/toEdit/" + data.id;
+        let title = '编辑通知';
         showAeDialog(url, title);
       } else if (layEvent === 'mx') { //详情
-        let url = ctx + "CZF/KYDW/KYRY/toInfo/" + data.id;
-        let title = '科研人员详情';
+        let url = ctx + "CZF/TZ/toInfo/" + data.id;
+        let title = '通知详情';
+        //showInfoDialog(url, title);
+        /*TAB.open({
+          "data-id": "tzDetail-" + data.id,
+          "data-url": url,
+          "title": "通知详情"
+        });*/
         showInfoDialog(url, title);
-      } else if (layEvent === 'tj') { //提交
-        top.layer.confirm('确定要提交该科研人员？', {
-          btn: ['确定', '取消'] //按钮
-        }, function () {
-          RY.submit(data.id, function () {
-            window.location.reload();
-            return false;
-          });
-        }, function () {
-        });
       }
     });
 
     //添加按钮事件
-    $("#addRy").on('click', function () {
-      debugger;
-      let url = ctx + "CZF/KYDW/KYRY/toAdd";
-      let title = '添加科研人员';
+    $("#addTz").on('click', function () {
+      let url = ctx + "CZF/TZ/toAdd";
+      let title = '添加通知';
       showAeDialog(url, title);
       return false;
     });
@@ -181,12 +161,12 @@
         title: title,
         closeBtn: 1,
         shadeClose: false,
-        area: ['1200px', '90%'],
+        area: ['900px', '90%'],
         btn: ['确定', '取消'],
         yes: function (index, layero) {
           debugger;
           let body = top.layer.getChildFrame('body', index);
-          let frm = $(body).find("form#ry_Form");
+          let frm = $(body).find("form#tz_Form");
           $(frm).find("button.sb").click();
           return false;
         },
@@ -208,22 +188,27 @@
         title: title,
         closeBtn: 1,
         shadeClose: false,
-        area: ['1200px', '90%']
+        area: ['900px', '90%']
       });
       return false;
     }
 
     //搜索按钮事件
     form.on('submit(formDemo1)', function (data) {
-      let zgh = data.field.zgh;
+      let code = data.field.code;
       let name = data.field.name;
+      let yz = data.field.yz;
 
       let params = {};
-      if (zgh) {
-        params['zgh'] = zgh;
+
+      if (code) {
+        params['code'] = code;
       }
       if (name) {
         params['name'] = name;
+      }
+      if (yz) {
+        params['yz'] = yz;
       }
 
       getTableData(params);

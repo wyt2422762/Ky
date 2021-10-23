@@ -1,15 +1,15 @@
-const RY = {
-  //获取科研人员详情
+const TZ = {
+  //获取通知详情
   getDetail: function (id, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/KYDW/KYRY/getDetail/" + id,
+      url: ctx + "CZF/TZ/getDetail/" + id,
       type: "GET",
       async: false,
       contentType: "application/json;charset=utf-8",
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
-        if (callBack) {
+        if(callBack){
           callBack(data);
         }
         return false;
@@ -22,26 +22,24 @@ const RY = {
     });
     return false;
   },
-  //添加科研人员
-  add: function (zj, callBack) {
+  //保存通知
+  add: function (tz, callBack) {
     let loadi = top.layer.load();
-    debugger;
     $.ajax({
-      url: ctx + "CZF/KYDW/KYRY/add",
+      url: ctx + "CZF/TZ/add",
       type: "POST",
+      dataType: "json",
       contentType: "application/json;charset=utf-8",
-      data: JSON.stringify(zj),
+      data: JSON.stringify(tz),
       success: function (data) {
-        debugger;
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(data.msg);
-        if (callBack) {
+        if(callBack){
           callBack();
         }
         return false;
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
-        debugger;
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(XMLHttpRequest.responseJSON.msg ? XMLHttpRequest.responseJSON.msg : "操作失败!");
         return false;
@@ -49,18 +47,19 @@ const RY = {
     });
     return false;
   },
-  //编辑科研人员
-  edit: function (xm, callBack) {
+  //编辑通知
+  edit: function (tz, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/KYDW/KYRY/edit",
+      url: ctx + "CZF/TZ/edit",
       type: "PUT",
+      dataType: "json",
       contentType: "application/json;charset=utf-8",
-      data: JSON.stringify(xm),
+      data: JSON.stringify(tz),
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(data.msg);
-        if (callBack) {
+        if(callBack){
           callBack();
         }
         return false;
@@ -73,16 +72,16 @@ const RY = {
     });
     return false;
   },
-  //删除科研人员
+  //删除通知
   del: function (id, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/KYDW/KYRY/del/" + id,
+      url: ctx + "CZF/TZ/del/" + id,
       type: "DELETE",
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(data.msg);
-        if (callBack) {
+        if(callBack){
           callBack();
         }
       },
@@ -93,20 +92,18 @@ const RY = {
     });
     return false;
   },
-  //提交
-  submit: function (id, callBack) {
-    debugger;
+  //删除通知附件
+  delFj: function delXmFj(path, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/KYDW/KYRY/submit/" + id,
-      type: "PUT",
+      url: ctx + "common/del/upload",
+      type: "DELETE",
       contentType: "application/json;charset=utf-8",
+      data: {"resource": path},
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(data.msg);
-        if (callBack) {
-          callBack();
-        }
+        callBack();
         return false;
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -117,29 +114,12 @@ const RY = {
     });
     return false;
   },
-  //审核科研人员
-  review: function (fk_ryid, rysh, callBack) {
-    debugger;
-    let loadi = top.layer.load();
-    $.ajax({
-      url: ctx + "CZF/KYDW/KYRY/REVIEW/review/" + fk_ryid,
-      type: "PUT",
-      contentType: "application/json;charset=utf-8",
-      data: JSON.stringify(rysh),
-      success: function (data) {
-        top.layer.close(loadi); //关闭弹出框
-        top.layer.msg(data.msg);
-        if (callBack) {
-          callBack();
-        }
-        return false;
-      },
-      error: function (XMLHttpRequest, textStatus, errorThrown) {
-        top.layer.close(loadi); //关闭弹出框
-        top.layer.msg(XMLHttpRequest.responseJSON.msg ? XMLHttpRequest.responseJSON.msg : "操作失败!");
-        return false;
-      }
-    });
-    return false;
+  //下载通知附件
+  downloadFj: function (path, name) {
+    let dUrl = ctx + "common/download/upload?resource=" + path;
+    if (name) {
+      dUrl += "&name=" + name;
+    }
+    window.open(dUrl);
   }
 }

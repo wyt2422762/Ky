@@ -3,7 +3,6 @@ package com.fdkj.ky.api.util.ky.ry;
 import com.alibaba.fastjson.JSONObject;
 import com.fdkj.ky.api.model.ky.ry.Zj;
 import com.fdkj.ky.api.model.system.User;
-import com.fdkj.ky.api.model.system.Xy;
 import com.fdkj.ky.api.util.BaseApi;
 import com.fdkj.ky.base.Page;
 import com.fdkj.ky.error.BusinessException;
@@ -36,7 +35,6 @@ public class ZjApi extends BaseApi {
      * @param pageNo    第几页
      * @param pageSize  每页显示多少条
      * @return res
-     * @throws Exception err
      */
     public Page<Zj> getZjList(HttpServletRequest request, Map<String, Object> reqParams, Map<String, Object> reqBody, Integer pageNo, Integer pageSize) {
         User user = getUserFromCookie(request);
@@ -102,7 +100,6 @@ public class ZjApi extends BaseApi {
      * @param reqParams 请求参数
      * @param reqBody   请求体
      * @return res
-     * @throws Exception err
      */
     public List<Zj> getZjList(HttpServletRequest request, Map<String, Object> reqParams, Map<String, Object> reqBody) {
         User user = getUserFromCookie(request);

@@ -25,8 +25,8 @@ public class BusConfig {
     }
 
     @Value("${bus.file.max-size}")
-    public void setFileMaxSize(String fileBaseDir) {
-        BusConfig.fileBaseDir = fileBaseDir;
+    public void setFileMaxSize(long fileMaxSize) {
+        BusConfig.fileMaxSize = fileMaxSize;
     }
 
     /**

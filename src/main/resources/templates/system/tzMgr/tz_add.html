@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-添加通知</title>
+</head>
+<body>
+
+<div style="padding: 20px;">
+  <form class="layui-form" method="post" id="tz_Form">
+    <div class="layui-form">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">标题</label>
+          <div class="layui-input-block">
+            <input type="text" class="layui-input" name="title" lay-verify="required" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 通知内容 -->
+      <div class="layui-form-item" id="content_show"></div>
+      <textarea id="content" name="content" style="display: none;" lay-verify="required"></textarea>
+
+      <!-- 通知附件 -->
+      <div class="layui-form-item">
+        <div class="layui-upload">
+          <button type="button" class="layui-btn layui-btn-normal" id="fj">选择附件</button>
+          <!-- 进度条 -->
+          <div class="layui-progress" id="progress" lay-filter="progress" style="display: none;">
+            <div class="layui-progress-bar"></div>
+          </div>
+          <div class="layui-upload-list">
+            <table class="layui-table">
+              <tbody id="fjList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button class="sb" lay-submit lay-filter="tz_Form" style="display: none;">提交</button>
+  </form>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/sysMgr/tz/tz.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/wangEditor.min.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+  const E = window.wangEditor;
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form', 'upload'], function () {
+    let element = layui.element;
+    //let laydate = layui.laydate;
+    let form = layui.form;
+    let table = layui.table;
+    let layedit = layui.layedit;
+    let upload = layui.upload;
+
+    //构造富文本编辑器
+    const editor = new E('#content_show');
+    editor.config.placeholder = '通知内容';
+    editor.config.uploadImgServer = ctx + "common/upload";
+    editor.config.showLinkImg = false;
+    editor.config.uploadImgMaxLength = 1;
+    editor.config.uploadFileName = 'file';
+    editor.config.pasteIgnoreImg = true;
+    // 配置菜单栏，设置不需要的菜单
+    editor.config.excludeMenus = [
+      'emoticon',
+      'video',
+      'image',
+      'code',
+      'todo',
+      'undo',
+      'redo'
+    ];
+    editor.config.onchange = function (html) {
+      // 第二步，监控变化，同步更新到 textarea
+      $('#content').val(html);
+    }
+    editor.config.uploadImgHooks = {
+      // 上传图片之前
+      before: function(xhr) {
+        console.log(xhr);
+        // 可阻止图片上传
+        return {
+          prevent: false,
+          msg: '需要提示给用户的错误信息'
+        }
+      },
+      // 图片上传并返回了结果，图片插入已成功
+      success: function(xhr) {
+        console.log('success', xhr);
+      },
+      // 图片上传并返回了结果，但图片插入时出错了
+      fail: function(xhr, editor, resData) {
+        console.log('fail', resData);
+      },
+      // 上传图片出错，一般为 http 请求的错误
+      error: function(xhr, editor, resData) {
+        console.log('error', xhr, resData);
+      },
+      // 上传图片超时
+      timeout: function(xhr) {
+        console.log('timeout');
+      },
+      // 图片上传并返回了结果，想要自己把图片插入到编辑器中
+      // 例如服务器端返回的不是 { errno: 0, data: [...] } 这种格式，可使用 customInsert
+      customInsert: function(insertImgFn, result) {
+        // result 即服务端返回的接口
+        debugger;
+        console.log('customInsert', result);
+
+        // insertImgFn 可把图片插入到编辑器，传入图片 src ，执行函数即可
+        insertImgFn(ctx + "common/download/upload?resource=" + result.url);
+      }
+    };
+
+    editor.create();
+
+    renderUpload('#fj', '#fjList', 'progress');
+
+    //表单提交
+    form.on('submit(tz_Form)', function (data) {
+      //项目model信息
+      let model = {};
+      for (let key in data.field) {
+        let val = data.field[key];
+        if (val) {
+          model[key] = val;
+        }
+      }
+      //基础信息
+      tz.model = model;
+
+      let indexout = top.layer.getFrameIndex(window.name); //获取窗口索引
+
+      TZ.add(tz, function () {
+        debugger;
+        top.layer.close(indexout); //关闭弹出框
+        TAB.refreshLayerOpen();
+        return false;
+      });
+
+      return false;
+    });
+
+    //通知
+    let tz = {
+      model: {},
+      list: []
+    };
+
+    /**
+     * 渲染文件上传
+     * @param elem 文本域id #xxx
+     * @param elemList 文件列表id #xxx
+     * @param progressBar 进度条 xxxx
+     */
+    function renderUpload(elem, elemList, progressBar) {
+      let loadi;
+
+      let uploadIns = upload.render({
+        elem: elem,
+        elemList: $(elemList),
+        url: ctx + "CZF/TZ/upload",
+        accept: 'file',
+        multiple: false,
+        number: 3,
+        auto: true,
+        field: 'file',
+        //bindAction: bindAction,
+        //exts: 'jpg|png|gif|bmp|jpeg|pdf',
+        choose: function (obj) {
+          let that = this;
+          let files = that.files = obj.pushFile();
+          debugger;
+          element.progress(progressBar, '0%');
+          $("#" + progressBar).show();
+        },
+        before: function(obj){ //上传前的回调
+          loadi = top.layer.load();
+        },
+        done: function (res, index, upload) { //成功的回调
+          debugger;
+          top.layer.close(loadi);
+          $("#" + progressBar).hide();
+
+          let that = this;
+          let tzfj = res.data;
+
+          let tr = $(['<tr id="upload-' + index + '">',
+            '<td>' + tzfj.name + '</td>',
+            '<td>',
+            "<button data-fjmc='" + tzfj.name + "' data-fjdz='" + tzfj.path + "' class='layui-btn layui-btn-xs fj-download'>下载</button>",
+            "<button data-fjmc='" + tzfj.name + "' data-fjdz='" + tzfj.path + "' class='layui-btn layui-btn-xs layui-btn-danger fj-delete'>删除</button>",
+            '</td>',
+            '</tr>'].join(''));
+
+          that.elemList.append(tr);
+
+          delete that.files[index]; //删除文件队列已经上传成功的文件
+
+          //添加附件信息
+          tz.list.push(tzfj);
+
+          //删除附件方法
+          tr.find('.fj-delete').on('click', function () {
+            //调用接口删除已上传的文件
+            let path = $(this).attr("data-fjdz");
+            let name = $(this).attr("data-fjmc");
+            TZ.delFj(path, function () {
+              delete that.files[index]; //删除对应的文件
+              tr.remove();
+              uploadIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+
+              for (let i = 0; i < xm.list.length; i++) {
+                let tzFj = (tz.list)[i];
+                if (name == tzFj.name && path == tzFj.path) {
+                  tz.list.splice(i, 1);
+                  break;
+                }
+              }
+              return false;
+            });
+            return false;
+          });
+
+          //下载附件方法
+          tr.find('.fj-download').on('click', function () {
+            let path = $(this).attr("data-fjdz");
+            let name = $(this).attr("data-fjmc");
+            TZ.downloadFj(path, name);
+            return false;
+          });
+
+          return false;
+        },
+        allDone: function (obj) { //多文件上传完毕后的状态回调
+          top.layer.close(loadi);
+          $("#" + progressBar).hide();
+          return false;
+        },
+        error: function (index, upload) { //错误回调
+          top.layer.close(loadi);
+          top.layer.msg("上传失败");
+          return false;
+        },
+        progress: function (n, elem, e, index) { //注意：index 参数为 layui 2.6.6 新增
+          element.progress(progressBar, n + '%'); //执行进度条。n 即为返回的进度百分比
+        }
+      });
+      return false;
+    }
+  });
+</script>
+</body>
+</html>
