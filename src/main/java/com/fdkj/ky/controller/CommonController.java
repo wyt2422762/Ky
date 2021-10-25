@@ -17,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -132,10 +129,10 @@ public class CommonController {
     /**
      * 删除上传的文件
      */
-    @RequestMapping("del/upload")
+    @RequestMapping("del/upload/{resource}")
     @ResponseBody
     @Log(module = "通用", desc = "删除文件", optType = Constants.OptType.REMOVE)
-    public ResponseEntity<CusResponseBody> delUpload(String resource, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<CusResponseBody> delUpload(@PathVariable String resource, HttpServletRequest request, HttpServletResponse response) {
         try {
             if (!FileUtils.checkAllowDownload(resource)) {
                 throw new BusinessException("资源文件非法，不允许删除。", HttpStatus.BAD_REQUEST.value());

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-科研机构详情</title>
+</head>
+<body>
+<div style="padding: 20px;">
+  <form class="layui-form" method="post" id="jg_Form" lay-filter="jg_Form">
+    <div class="layui-form">
+      <table class="layui-table">
+        <tbody>
+          <tr>
+            <th>机构编码</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="code" lay-verify="required" />
+            </td>
+            <th>机构名称</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="name" lay-verify="required" />
+            </td>
+            <th>所属学院</th>
+            <td>
+              <select name="fk_xyid" lay-filter="xy" disabled>
+                <option value="">请选择学院</option>
+                <option th:each="xy,stat:${xyList}" th:value="${xy.id}"
+                        th:text="${xy.name}"></option>
+              </select>
+            </td>
+          <tr>
+            <th>负责人</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="fzr" lay-verify="required" />
+            </td>
+            <th>联系人</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="lxr" lay-verify="required" />
+            </td>
+            <th>联系电话</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="lxdh" lay-verify="required" />
+            </td>
+          </tr>
+          <tr>
+            <th>成立日期</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="clrq" id="clrq" />
+            </td>
+            <th>挂靠单位</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="gkdw" />
+            </td>
+            <th>人事单位</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="rsdw" />
+            </td>
+          </tr>
+          <tr>
+            <th>邮箱</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="email" />
+            </td>
+            <th>电话</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="tel" />
+            </td>
+            <th>传真</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="fax" />
+            </td>
+          </tr>
+          <tr>
+            <th>地址</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="addr" />
+            </td>
+            <th>邮编</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="postcode" />
+            </td>
+            <th>网址</th>
+            <td>
+              <input type="text" readonly class="layui-input" name="url" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <fieldset class="layui-elem-field layui-field-title">
+        <legend>附件</legend>
+      </fieldset>
+
+      <!-- 通知附件 -->
+      <div class="layui-form-item">
+        <div class="layui-upload">
+          <div class="layui-upload-list">
+            <table class="layui-table">
+              <tbody id="fjList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/ky/jg/jg.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+  const id = [[${id}]];
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form', 'upload'], function () {
+    let element = layui.element;
+    let laydate = layui.laydate;
+    let form = layui.form;
+    let table = layui.table;
+    let layedit = layui.layedit;
+    let upload = layui.upload;
+
+    //通知
+    let jg = {
+      model: {},
+      list: []
+    };
+
+    getJg(id);
+
+    //renderUpload('#fj', '#fjList', 'progress');
+
+    //下载附件方法
+    $("tbody").on('click', 'button.fj-download', function () {
+      debugger;
+      let path = $(this).attr("data-fjdz");
+      let name = $(this).attr("data-fjmc");
+      TZ.downloadFj(path, name);
+      return false;
+    });
+
+    //获取项目信息
+    function getJg(id) {
+      debugger;
+      JG.getDetail(id, function (data) {
+        jg = data.data;
+        //1. 处理基本信息
+        form.val("jg_Form", jg.model);
+
+        //2. 处理附件
+        let fjList = jg.list;
+        if (fjList) {
+          for(let i = 0; i < fjList.length; i++) {
+            let jgfj = fjList[i];
+
+            let tr = $(['<tr>',
+              '<td>' + jgfj.name + '</td>',
+              '<td>',
+              "<button data-fjmc='" + jgfj.name + "' data-fjdz='" + jgfj.path + "' class='layui-btn layui-btn-xs fj-download'>下载</button>",
+              '</td>',
+              '</tr>'].join(''));
+            $("#fjList").append(tr);
+          }
+        }
+        return false;
+      });
+      return false;
+    }
+  });
+</script>
+</body>
+</html>

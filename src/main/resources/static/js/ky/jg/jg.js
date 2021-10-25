@@ -1,9 +1,9 @@
-const TZ = {
-  //获取通知详情
+const JG = {
+  //获取机构详情
   getDetail: function (id, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/TZ/getDetail/" + id,
+      url: ctx + "CZF/KYDW/KYJG/getDetail/" + id,
       type: "GET",
       async: false,
       contentType: "application/json;charset=utf-8",
@@ -22,15 +22,15 @@ const TZ = {
     });
     return false;
   },
-  //保存通知
-  add: function (tz, callBack) {
+  //保存机构
+  add: function (jg, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/TZ/add",
+      url: ctx + "CZF/KYDW/KYJG/add",
       type: "POST",
       dataType: "json",
       contentType: "application/json;charset=utf-8",
-      data: JSON.stringify(tz),
+      data: JSON.stringify(jg),
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(data.msg);
@@ -47,15 +47,15 @@ const TZ = {
     });
     return false;
   },
-  //编辑通知
-  edit: function (tz, callBack) {
+  //编辑机构
+  edit: function (jg, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/TZ/edit",
+      url: ctx + "CZF/KYDW/KYJG/edit",
       type: "PUT",
       dataType: "json",
       contentType: "application/json;charset=utf-8",
-      data: JSON.stringify(tz),
+      data: JSON.stringify(jg),
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
         top.layer.msg(data.msg);
@@ -72,11 +72,11 @@ const TZ = {
     });
     return false;
   },
-  //删除通知
+  //删除机构
   del: function (id, callBack) {
     let loadi = top.layer.load();
     $.ajax({
-      url: ctx + "CZF/TZ/del/" + id,
+      url: ctx + "CZF/KYDW/KYJG/del/" + id,
       type: "DELETE",
       success: function (data) {
         top.layer.close(loadi); //关闭弹出框
@@ -92,8 +92,8 @@ const TZ = {
     });
     return false;
   },
-  //删除通知附件
-  delFj: function delXmFj(path, callBack) {
+  //删除机构附件
+  delFj: function (path, callBack) {
     let loadi = top.layer.load();
     $.ajax({
       url: ctx + "common/del/upload/" + path,
@@ -113,7 +113,7 @@ const TZ = {
     });
     return false;
   },
-  //下载通知附件
+  //下载机构附件
   downloadFj: function (path, name) {
     let dUrl = ctx + "common/download/upload?resource=" + path;
     if (name) {

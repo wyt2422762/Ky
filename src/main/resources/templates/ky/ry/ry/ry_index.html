@@ -59,11 +59,12 @@
       <script type="text/html" id="ryTableToolBar">
         <a th:if="${#lists.contains(opts, 'show')}" class="layui-btn layui-btn-xs"
            lay-event="mx">详情</a>
-        {{#  if('已保存' == d.zt || '退回' == d.zt){ }}
+
         <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-normal layui-btn-xs"
            lay-event="edit">编辑</a>
         <a th:if="${#lists.contains(opts, 'del')}" class="layui-btn layui-btn-danger layui-btn-xs"
            lay-event="del">删除</a>
+        {{#  if('已保存' == d.zt || '退回' == d.zt){ }}
         <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-warm layui-btn-xs"
            lay-event="tj">提交</a>
         {{#  } }}

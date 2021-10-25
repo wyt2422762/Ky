@@ -24,7 +24,11 @@
           </td>
           <th>所属科研机构</th>
           <td>
-            <input type="text" readonly name="fk_jgid" autocomplete="off" placeholder="请输入fk_jgid" class="layui-input"/>
+            <select name="fk_jgid" lay-filter="jg" disabled>
+              <option value="">请选择科研机构</option>
+              <option th:each="jg,stat:${jgList}" th:value="${jg.id}"
+                      th:text="${jg.name}"></option>
+            </select>
           </td>
         </tr>
         <tr>
@@ -171,6 +175,7 @@
     function getRy(id){
       RY.getDetail(id, function (data) {
         ry = data.data;
+        debugger;
         form.val("ry_Form", ry);
         return false;
       });

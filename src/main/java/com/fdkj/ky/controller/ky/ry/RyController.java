@@ -1,11 +1,13 @@
 package com.fdkj.ky.controller.ky.ry;
 
 import com.fdkj.ky.annotation.Log;
+import com.fdkj.ky.api.model.ky.jg.Jg;
 import com.fdkj.ky.api.model.ky.ry.Ry;
 import com.fdkj.ky.api.model.ky.ry.RyReview;
 import com.fdkj.ky.api.model.ky.ry.Zj;
 import com.fdkj.ky.api.model.system.User;
 import com.fdkj.ky.api.model.system.Zd;
+import com.fdkj.ky.api.util.ky.jg.JgApi;
 import com.fdkj.ky.api.util.ky.ry.RyApi;
 import com.fdkj.ky.api.util.sys.DictApi;
 import com.fdkj.ky.base.CusResponseBody;
@@ -47,6 +49,8 @@ public class RyController extends BaseController {
     private RyApi ryApi;
     @Autowired
     private DictApi dictApi;
+    @Autowired
+    private JgApi jgApi;
 
     /**
      * 跳转
@@ -101,6 +105,10 @@ public class RyController extends BaseController {
         List<Zd> edu = dictApi.getZdList(request, dictParams);
         request.setAttribute("dict_edu", edu);
 
+        //获取机构信息
+        List<Jg> jgList = jgApi.getList(request, null, null);
+        request.setAttribute("jgList", jgList);
+
         return new ModelAndView("ky/ry/ry/ry_add");
     }
 
@@ -139,6 +147,10 @@ public class RyController extends BaseController {
         List<Zd> edu = dictApi.getZdList(request, dictParams);
         request.setAttribute("dict_edu", edu);
 
+        //获取机构信息
+        List<Jg> jgList = jgApi.getList(request, null, null);
+        request.setAttribute("jgList", jgList);
+
         return new ModelAndView("ky/ry/ry/ry_edit");
     }
 
@@ -176,6 +188,10 @@ public class RyController extends BaseController {
         dictParams.put("fid", Constants.Dict.EDU);
         List<Zd> edu = dictApi.getZdList(request, dictParams);
         request.setAttribute("dict_edu", edu);
+
+        //获取机构信息
+        List<Jg> jgList = jgApi.getList(request, null, null);
+        request.setAttribute("jgList", jgList);
 
         return new ModelAndView("ky/ry/ry/ry_info");
     }

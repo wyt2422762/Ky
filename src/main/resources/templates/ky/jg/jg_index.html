@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/common/header::header(~{::title},~{},~{})">
-  <title>科研系统-通知管理</title>
+  <title>科研系统-科研机构</title>
 </head>
 <body>
 
@@ -10,10 +10,10 @@
 <div class="layui-tab-item layui-show" style="padding: 10px;">
   <div id="LAY_preview">
     <fieldset class="layui-elem-field layui-field-title">
-      <legend>通知列表</legend>
+      <legend>科研机构列表</legend>
     </fieldset>
 
-    <!-- 通知列表 -->
+    <!-- 科研机构列表 -->
     <div style="padding: 10px;">
       <div>
         <form class="layui-form" id="searchForm">
@@ -21,7 +21,14 @@
 
             <div class="layui-inline">
               <div class="layui-input-inline">
-                <input type="text" id="title" name="title" placeholder="请输入通知标题"
+                <input type="text" id="code" name="code" placeholder="请输入机构编号"
+                       autocomplete="off" class="layui-input"/>
+              </div>
+            </div>
+
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <input type="text" id="name" name="name" placeholder="请输入机构名称"
                        autocomplete="off" class="layui-input"/>
               </div>
             </div>
@@ -36,8 +43,8 @@
             </div>
 
             <div class="layui-inline" style="float: right;">
-              <button th:if="${#lists.contains(opts, 'add')}" id="addTz" class="layui-btn layui-btn-normal"
-                      style="margin-left:15px;">新建通知
+              <button th:if="${#lists.contains(opts, 'add')}" id="addJg" class="layui-btn layui-btn-normal"
+                      style="margin-left:15px;">新建科研机构
               </button>
             </div>
           </div>
@@ -48,9 +55,9 @@
 
       </div>
 
-      <table id="tzTable" class="layui-table" lay-filter="tzTable"></table>
+      <table id="jgTable" class="layui-table" lay-filter="jgTable"></table>
 
-      <script type="text/html" id="tzTableToolBar">
+      <script type="text/html" id="jgTableToolBar">
         <a th:if="${#lists.contains(opts, 'show')}" class="layui-btn layui-btn-xs"
            lay-event="mx">详情</a>
         <a th:if="${#lists.contains(opts, 'update')}" class="layui-btn layui-btn-normal layui-btn-xs"
@@ -60,12 +67,13 @@
       </script>
 
     </div>
+
   </div>
 </div>
 
 <div th:replace="/common/footer::footer()"></div>
 
-<script type="text/javascript" th:src="@{/static/js/sysMgr/tz/tz.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/ky/jg/jg.js}"></script>
 
 <script th:inline="javascript">
   const cuser = [[${cuser}]];
@@ -81,13 +89,13 @@
 
     getInitData();
 
-    //获取通知列表
+    //获取科研机构列表
     function getTableData(params) {
-      let url = ctx + 'CZF/TZ/getList';
+      let url = ctx + 'CZF/KYDW/KYJG/getList';
       //获取表格数据
       table.render({
-        elem: '#tzTable',
-        title: '通知列表',
+        elem: '#jgTable',
+        title: '科研机构列表',
         url: url, //数据接口
         where: params, //请求参数
         page: {
@@ -97,9 +105,10 @@
         limit: 10,
         //limits: [10, 20, 50],
         cols: [[ //表头
-          {field: 'title', title: '通知标题'},
-          {field: 'addtime', title: '发布时间'},
-          {fixed: 'right', align: 'center', title: '操作', toolbar: '#tzTableToolBar', width: 250}
+          {field: 'code', title: '机构编号'},
+          {field: 'name', title: '机构名称'},
+          {field: 'fzr', title: '负责人'},
+          {fixed: 'right', align: 'center', title: '操作', toolbar: '#jgTableToolBar', width: 250}
         ]],
         parseData: function (res) { //res 即为原始返回的数据
           return {
@@ -113,42 +122,42 @@
     }
 
     //工具条事件
-    table.on('tool(tzTable)', function (obj) {
+    table.on('tool(jgTable)', function (obj) {
       let data = obj.data; //获得当前行数据
       let layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
       let tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
 
       if (layEvent === 'del') { //删除
-        top.layer.confirm('确定要删除该通知？', {
+        top.layer.confirm('确定要删除该科研机构？', {
           btn: ['确定', '取消'] //按钮
         }, function () {
-          TZ.del(data.id, function () {
+          JG.del(data.id, function () {
             window.location.reload();
             return false;
           });
         }, function () {
         });
       } else if (layEvent === 'edit') { //编辑
-        let url = ctx + "CZF/TZ/toEdit/" + data.id;
-        let title = '编辑通知';
+        let url = ctx + "CZF/KYDW/KYJG/toEdit/" + data.id;
+        let title = '编辑科研机构';
         showAeDialog(url, title);
       } else if (layEvent === 'mx') { //详情
-        let url = ctx + "CZF/TZ/toInfo/" + data.id;
-        let title = '通知详情';
+        let url = ctx + "CZF/KYDW/KYJG/toInfo/" + data.id;
+        let title = '科研机构详情';
         //showInfoDialog(url, title);
         /*TAB.open({
           "data-id": "tzDetail-" + data.id,
           "data-url": url,
-          "title": "通知详情"
+          "title": "科研机构详情"
         });*/
         showInfoDialog(url, title);
       }
     });
 
     //添加按钮事件
-    $("#addTz").on('click', function () {
-      let url = ctx + "CZF/TZ/toAdd";
-      let title = '添加通知';
+    $("#addJg").on('click', function () {
+      let url = ctx + "CZF/KYDW/KYJG/toAdd";
+      let title = '添加科研机构';
       showAeDialog(url, title);
       return false;
     });
@@ -166,7 +175,7 @@
         yes: function (index, layero) {
           debugger;
           let body = top.layer.getChildFrame('body', index);
-          let frm = $(body).find("form#tz_Form");
+          let frm = $(body).find("form#jg_Form");
           $(frm).find("button.sb").click();
           return false;
         },
@@ -197,7 +206,6 @@
     form.on('submit(formDemo1)', function (data) {
       let code = data.field.code;
       let name = data.field.name;
-      let yz = data.field.yz;
 
       let params = {};
 
@@ -206,9 +214,6 @@
       }
       if (name) {
         params['name'] = name;
-      }
-      if (yz) {
-        params['yz'] = yz;
       }
 
       getTableData(params);
@@ -223,5 +228,6 @@
     }
   });
 </script>
+
 </body>
 </html>

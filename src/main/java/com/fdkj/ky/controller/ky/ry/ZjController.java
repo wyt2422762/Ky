@@ -1,8 +1,10 @@
 package com.fdkj.ky.controller.ky.ry;
 
 import com.fdkj.ky.annotation.Log;
+import com.fdkj.ky.api.model.ky.jg.Jg;
 import com.fdkj.ky.api.model.ky.ry.Zj;
 import com.fdkj.ky.api.model.system.Zd;
+import com.fdkj.ky.api.util.ky.jg.JgApi;
 import com.fdkj.ky.api.util.ky.ry.ZjApi;
 import com.fdkj.ky.api.util.sys.DictApi;
 import com.fdkj.ky.base.CusResponseBody;
@@ -44,6 +46,8 @@ public class ZjController extends BaseController {
     private ZjApi zjApi;
     @Autowired
     private DictApi dictApi;
+    @Autowired
+    private JgApi jgApi;
 
     /**
      * 跳转
@@ -98,6 +102,10 @@ public class ZjController extends BaseController {
         List<Zd> edu = dictApi.getZdList(request, dictParams);
         request.setAttribute("dict_edu", edu);
 
+        //获取机构信息
+        List<Jg> jgList = jgApi.getList(request, null, null);
+        request.setAttribute("jgList", jgList);
+
         return new ModelAndView("ky/ry/zj/zj_add");
     }
 
@@ -136,6 +144,10 @@ public class ZjController extends BaseController {
         List<Zd> edu = dictApi.getZdList(request, dictParams);
         request.setAttribute("dict_edu", edu);
 
+        //获取机构信息
+        List<Jg> jgList = jgApi.getList(request, null, null);
+        request.setAttribute("jgList", jgList);
+
         return new ModelAndView("ky/ry/zj/zj_edit");
     }
 
@@ -173,6 +185,10 @@ public class ZjController extends BaseController {
         dictParams.put("fid", Constants.Dict.EDU);
         List<Zd> edu = dictApi.getZdList(request, dictParams);
         request.setAttribute("dict_edu", edu);
+
+        //获取机构信息
+        List<Jg> jgList = jgApi.getList(request, null, null);
+        request.setAttribute("jgList", jgList);
 
         return new ModelAndView("ky/ry/zj/zj_info");
     }
