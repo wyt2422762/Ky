@@ -105,9 +105,9 @@ public class CommonController {
     @Log(module = "通用", desc = "下载上传资源", optType = Constants.OptType.DOWNLOAD)
     public void resourceDownload(String resource, String name, HttpServletResponse response) {
         try {
-            if (!FileUtils.checkAllowDownload(resource)) {
+            /*if (!FileUtils.checkAllowDownload(resource)) {
                 throw new BusinessException("资源文件非法，不允许下载。", HttpStatus.BAD_REQUEST.value());
-            }
+            }*/
             // 本地资源路径
             String localPath = BusConfig.getUploadBaseDir();
             // 数据库资源地址

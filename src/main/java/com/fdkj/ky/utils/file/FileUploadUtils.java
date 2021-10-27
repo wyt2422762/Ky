@@ -87,7 +87,7 @@ public class FileUploadUtils {
         if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH) {
             throw new BusinessException("文件名过长", HttpStatus.BAD_REQUEST.value());
         }
-        assertAllowed(file, allowedExtension);
+        //assertAllowed(file, allowedExtension);
         String fileName = extractFilename(file);
         File desc = getAbsoluteFile(baseDir, fileName);
         file.transferTo(desc);
@@ -117,7 +117,7 @@ public class FileUploadUtils {
 
     private static String getPathFileName(String uploadDir, String fileName) throws IOException {
         int dirLastIndex = BusConfig.getUploadBaseDir().length() + 1;
-        String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
+        String currentDir = StringUtils.substring(uploadDir, dirLastIndex).replaceAll("\\\\", "/");
         return Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
     }
 

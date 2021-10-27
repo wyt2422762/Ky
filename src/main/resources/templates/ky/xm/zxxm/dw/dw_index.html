@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-纵向项目-合作单位</title>
+</head>
+<body>
+<input type="hidden" id="opts" th:value="${optsStr}"/>
+
+<div class="layui-tab-item layui-show" style="padding: 10px;">
+  <div id="LAY_preview">
+    <fieldset class="layui-elem-field layui-field-title">
+      <legend>合作单位列表</legend>
+    </fieldset>
+
+    <div style="padding: 10px;">
+      <div>
+        <div class="layui-inline">
+          <button th:if="${#lists.contains(opts, 'add')}" id="addDw" class="layui-btn layui-btn-normal">
+            添加合作单位
+          </button>
+        </div>
+      </div>
+
+      <table id="dwTable" class="layui-table" lay-filter="dwTable"></table>
+
+      <script type="text/html" id="dwTableToolBar">
+        <a th:if="${#lists.contains(opts, 'del')}" class="layui-btn layui-btn-danger layui-btn-xs"
+           lay-event="del">删除</a>
+      </script>
+    </div>
+
+  </div>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/ky/xm/zxxm/dw.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+  const opts = [[${opts}]];
+  const fk_xmid = [[${fk_xmid}]];
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form'], function () {
+    //let element = layui.element;
+    let laydate = layui.laydate;
+    let form = layui.form;
+    let table = layui.table;
+
+    getTableData();
+
+    //获取合作单位列表
+    function getTableData() {
+      let url = ctx + 'CZF/KYXM/ZXXM/DW/getList/' + fk_xmid;
+      //获取表格数据
+      table.render({
+        elem: '#dwTable',
+        title: '合作单位列表',
+        url: url, //数据接口
+        page: false,
+        cols: [[ //表头
+          {field: 'dwmc', title: '合作单位名称'},
+          {field: 'lxr', title: '联系人'},
+          {field: 'lxdh', title: '联系电话'},
+          {title: '操作', toolbar: '#dwTableToolBar', fixed: "right"}
+        ]],
+        parseData: function (res) { //res 即为原始返回的数据
+          return {
+            "code": res.success ? 0 : 1, //解析接口状态
+            "msg": res.msg, //解析提示文本
+            "data": res.data //解析数据列表
+          };
+        }
+      });
+    }
+
+    //工具条事件
+    table.on('tool(dwTable)', function (obj) {
+      let data = obj.data; //获得当前行数据
+      let layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+      let tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+
+      if (layEvent === 'del') { //删除
+        top.layer.confirm('确定要删除该合作单位？', {
+          btn: ['确定', '取消'] //按钮
+        }, function () {
+          ZXXM_DW.del(data.id, function () {
+            window.location.reload();
+            return false;
+          });
+        }, function () {
+        });
+      }
+    });
+
+    //添加按钮事件
+    $("#addDw").on('click', function () {
+      let url = ctx + "CZF/KYXM/ZXXM/DW/toAdd/" + fk_xmid;
+      let title = '添加合作单位';
+      showAeDialog(url, title, function () {
+        debugger;
+        window.location.reload();
+      });
+      return false;
+    });
+
+    //显示添加修改弹出框
+    function showAeDialog(url, title, callBack) {
+      top.layer.open({
+        type: 2,
+        content: url,
+        title: title,
+        closeBtn: 1,
+        shadeClose: false,
+        area: ['1200px', '90%'],
+        btn: ['确定', '取消'],
+        yes: function (index, layero) {
+          debugger;
+          let body = top.layer.getChildFrame('body', index);
+          let frm = $(body).find("form#dw_Form");
+          $(frm).find("button.sb").click();
+          return false;
+        },
+        end: function (index) {
+          top.layer.close(index);
+          if (callBack) {
+            callBack();
+          }
+        }
+      });
+      return false;
+    }
+  });
+</script>
+
+</body>
+</html>

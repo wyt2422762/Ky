@@ -32,6 +32,18 @@ public class Constants {
          * 学位
          */
         public static final String DEGREE = "012f4248-cec4-4df1-aae3-ea96a86f7420";
+        /**
+         * 项目状态
+         */
+        public static final String XMZT = "0f139cf6-5044-4828-8a89-0d0d94faea94";
+        /**
+         * 项目级别
+         */
+        public static final String XMJB = "51f6cf7a-ced4-4073-9fd9-f07aeb1396f9";
+        /**
+         * 负责人类型
+         */
+        public static final String FZRLX = "7a844ed3-059f-44c9-807c-4113c49fc712";
     }
 
     /**

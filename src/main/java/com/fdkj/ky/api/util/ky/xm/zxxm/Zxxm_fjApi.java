@@ -1,8 +1,7 @@
-package com.fdkj.ky.api.util.ky.jg;
+package com.fdkj.ky.api.util.ky.xm.zxxm;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fdkj.ky.api.model.ky.jg.Jg;
-import com.fdkj.ky.api.model.ky.ry.Ry;
+import com.fdkj.ky.api.model.ky.xm.zxxm.Zxxm_fj;
 import com.fdkj.ky.api.model.system.User;
 import com.fdkj.ky.api.util.BaseApi;
 import com.fdkj.ky.base.Page;
@@ -18,17 +17,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
- * 科研机构接口
+ * 纵向项目附件接口
  *
  * @author wyt
  */
 @Component
-public class JgApi extends BaseApi {
-    private static final Logger logger = LoggerFactory.getLogger(JgApi.class);
-    
+public class Zxxm_fjApi extends BaseApi {
+    private static final Logger logger = LoggerFactory.getLogger(Zxxm_fjApi.class);
+
     /**
-     * 获取科研机构列表(分页)
+     * 获取纵向项目附件列表(分页)
      *
      * @param request   req
      * @param reqParams 请求参数
@@ -37,7 +37,7 @@ public class JgApi extends BaseApi {
      * @param pageSize  每页显示多少条
      * @return res
      */
-    public Page<Jg> getList(HttpServletRequest request, Map<String, Object> reqParams, Map<String, Object> reqBody, Integer pageNo, Integer pageSize) {
+    public Page<Zxxm_fj> getList(HttpServletRequest request, Map<String, Object> reqParams, Map<String, Object> reqBody, Integer pageNo, Integer pageSize) {
         User user = getUserFromCookie(request);
         //请求头
         HttpHeaders headers = getHttpHeaders(request);
@@ -57,7 +57,7 @@ public class JgApi extends BaseApi {
         params.put("page", pageNo == null ? 1 : pageNo);
         params.put("pageNum", pageSize == null ? 10 : pageSize);
 
-        String url = baseUrl + "/api/CZF/KY_KYJG_List";
+        String url = baseUrl + "/api/CZF/KY_ZXXM_FJ_List";
 
         if (reqParams != null && !reqParams.isEmpty()) {
             params.putAll(reqParams);
@@ -77,32 +77,32 @@ public class JgApi extends BaseApi {
 
         boolean success = jsonObject.getBooleanValue("Success");
         if (!success) {
-            logger.error("获取科研机构列表失败，请求url: " + baseUrl + "/api/CZF/KY_KYJG_List");
-            logger.error("获取科研机构列表失败，请求参数: " + params);
-            logger.error("获取科研机构列表失败，请求体: " + body.toJSONString());
-            logger.error("获取科研机构列表失败，返回内容: " + responseEntityBody);
+            logger.error("获取纵向项目附件列表失败，请求url: " + baseUrl + "/api/CZF/KY_ZXXM_FJ_List");
+            logger.error("获取纵向项目附件列表失败，请求参数: " + params);
+            logger.error("获取纵向项目附件列表失败，请求体: " + body.toJSONString());
+            logger.error("获取纵向项目附件列表失败，返回内容: " + responseEntityBody);
             throw new BusinessException(jsonObject.getString("Message"), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 
         //构造返回信息
-        Page<Jg> page = new Page<>(pageNo == null ? 1 : pageNo, pageSize == null ? 10 : pageSize);
+        Page<Zxxm_fj> page = new Page<>(pageNo == null ? 1 : pageNo, pageSize == null ? 10 : pageSize);
         Integer totalRecord = jsonObject.getInteger("TotalCount");
         page.setTotalRecord(totalRecord);
-        List<Jg> dataList = jsonObject.getJSONArray("Results").toJavaList(Jg.class);
+        List<Zxxm_fj> dataList = jsonObject.getJSONArray("Results").toJavaList(Zxxm_fj.class);
         page.setDataList(dataList);
 
         return page;
     }
 
     /**
-     * 获取科研机构列表
+     * 获取纵向项目附件列表
      *
      * @param request   req
      * @param reqParams 请求参数
      * @param reqBody   请求体
      * @return res
      */
-    public List<Jg> getList(HttpServletRequest request, Map<String, Object> reqParams, Map<String, Object> reqBody) {
+    public List<Zxxm_fj> getList(HttpServletRequest request, Map<String, Object> reqParams, Map<String, Object> reqBody) {
         User user = getUserFromCookie(request);
         //请求头
         HttpHeaders headers = getHttpHeaders(request);
@@ -120,7 +120,7 @@ public class JgApi extends BaseApi {
         //请求参数
         Map<String, Object> params = new HashMap<>(4);
 
-        String url = baseUrl + "/api/CZF/KY_KYJG_List";
+        String url = baseUrl + "/api/CZF/KY_ZXXM_FJ_List";
 
         if (reqParams != null && !reqParams.isEmpty()) {
             params.putAll(reqParams);
@@ -140,25 +140,25 @@ public class JgApi extends BaseApi {
 
         boolean success = jsonObject.getBooleanValue("Success");
         if (!success) {
-            logger.error("获取科研机构列表失败，请求url: " + baseUrl + "/api/CZF/KY_KYJG_List");
-            logger.error("获取科研机构列表失败，请求参数: " + params);
-            logger.error("获取科研机构列表失败，请求体: " + body.toJSONString());
-            logger.error("获取科研机构列表失败，返回内容: " + responseEntityBody);
+            logger.error("获取纵向项目附件列表失败，请求url: " + baseUrl + "/api/CZF/KY_ZXXM_FJ_List");
+            logger.error("获取纵向项目附件列表失败，请求参数: " + params);
+            logger.error("获取纵向项目附件列表失败，请求体: " + body.toJSONString());
+            logger.error("获取纵向项目附件列表失败，返回内容: " + responseEntityBody);
             throw new BusinessException(jsonObject.getString("Message"), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 
         //构造返回信息
-        return jsonObject.getJSONArray("Results").toJavaList(Jg.class);
+        return jsonObject.getJSONArray("Results").toJavaList(Zxxm_fj.class);
     }
-    
+
     /**
-     * 获取科研机构详情
+     * 获取纵向项目附件详情
      *
      * @param request req
-     * @param id      科研机构id
+     * @param id      纵向项目附件id
      * @return res
      */
-    public JSONObject getDetail(HttpServletRequest request, String id) throws Exception {
+    public Zxxm_fj getDetail(HttpServletRequest request, String id) throws Exception {
         //请求头
         HttpHeaders headers = getHttpHeaders(request);
         //请求体
@@ -172,7 +172,7 @@ public class JgApi extends BaseApi {
         Map<String, Object> params = new HashMap<>(1);
         params.put("id", id);
 
-        String url = baseUrl + "/api/CZF/KY_KYJG_Model?id={id}";
+        String url = baseUrl + "/api/CZF/KY_ZXXM_FJ_Model?id={id}";
         ResponseEntity<String> responseEntity =
                 restTemplate.exchange(url,
                         HttpMethod.POST, requestEntity, String.class, params);
@@ -181,21 +181,21 @@ public class JgApi extends BaseApi {
 
         boolean success = jsonObject.getBooleanValue("Success");
         if (!success) {
-            logger.error("获取科研机构详情失败，请求url: " + baseUrl + "/api/CZF/KY_KYJG_Model");
-            logger.error("获取科研机构详情失败，请求体: " + body.toJSONString());
-            logger.error("获取科研机构详情失败，请求参数: " + params);
-            logger.error("获取科研机构详情失败，返回内容: " + responseEntityBody);
+            logger.error("获取纵向项目附件详情失败，请求url: " + baseUrl + "/api/CZF/KY_ZXXM_FJ_Model");
+            logger.error("获取纵向项目附件详情失败，请求体: " + body.toJSONString());
+            logger.error("获取纵向项目附件详情失败，请求参数: " + params);
+            logger.error("获取纵向项目附件详情失败，返回内容: " + responseEntityBody);
             throw new BusinessException(jsonObject.getString("Message"), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 
-        return jsonObject.getJSONObject("Results");
+        return jsonObject.getObject("Results", Zxxm_fj.class);
     }
 
     /**
-     * 删除科研机构
+     * 删除纵向项目附件
      *
      * @param request req
-     * @param id      科研机构id
+     * @param id      纵向项目附件id
      */
     public void del(HttpServletRequest request, String id) {
         //请求头
@@ -207,21 +207,21 @@ public class JgApi extends BaseApi {
         params.put("id", id);
         //请求
         ResponseEntity<String> responseEntity =
-                restTemplate.exchange(baseUrl + "/api/CZF/KY_KYJG_Del?id={id}",
+                restTemplate.exchange(baseUrl + "/api/CZF/KY_ZXXM_FJ_Del?id={id}",
                         HttpMethod.POST, requestEntity, String.class, params);
         String responseEntityBody = responseEntity.getBody();
         JSONObject jsonObject = JSONObject.parseObject(responseEntityBody);
         boolean success = jsonObject.getBooleanValue("Success");
         if (!success) {
-            logger.error("删除科研机构失败，请求url: " + baseUrl + "/api/CZF/KY_KYJG_Del");
-            logger.error("删除科研机构失败，请求参数: " + params);
-            logger.error("删除科研机构失败，返回内容: " + responseEntityBody);
+            logger.error("删除纵向项目附件失败，请求url: " + baseUrl + "/api/CZF/KY_ZXXM_FJ_Del");
+            logger.error("删除纵向项目附件失败，请求参数: " + params);
+            logger.error("删除纵向项目附件失败，返回内容: " + responseEntityBody);
             throw new BusinessException(jsonObject.getString("Message"), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
     /**
-     * 更新添加科研机构
+     * 更新添加纵向项目附件
      *
      * @param request req
      * @param body    请求体
@@ -232,15 +232,15 @@ public class JgApi extends BaseApi {
         //组装请求体
         HttpEntity<JSONObject> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<String> responseEntity =
-                restTemplate.exchange(baseUrl + "/api/CZF/KY_KYJG_Update",
+                restTemplate.exchange(baseUrl + "/api/CZF/KY_ZXXM_FJ_Update",
                         HttpMethod.POST, requestEntity, String.class);
         String responseEntityBody = responseEntity.getBody();
         JSONObject jsonObject = JSONObject.parseObject(responseEntityBody);
         boolean success = jsonObject.getBooleanValue("Success");
         if (!success) {
-            logger.error("更新添加科研机构失败，请求url: " + baseUrl + "/api/CZF/KY_KYJG_Update");
-            logger.error("更新添加科研机构失败，请求体: " + body.toJSONString());
-            logger.error("更新添加科研机构失败，返回内容: " + responseEntityBody);
+            logger.error("更新添加纵向项目附件失败，请求url: " + baseUrl + "/api/CZF/KY_ZXXM_FJ_Update");
+            logger.error("更新添加纵向项目附件失败，请求体: " + body.toJSONString());
+            logger.error("更新添加纵向项目附件失败，返回内容: " + responseEntityBody);
             throw new BusinessException(jsonObject.getString("Message"), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }

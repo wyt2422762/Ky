@@ -186,7 +186,7 @@ public class JgController extends BaseController {
     @RequestMapping("add")
     @ResponseBody
     @Log(module = "科研机构", desc = "添加科研机构", optType = Constants.OptType.ADD)
-    public ResponseEntity<CusResponseBody> addXm(HttpServletRequest request,
+    public ResponseEntity<CusResponseBody> add(HttpServletRequest request,
                                                  @RequestBody JSONObject json) {
         return ae(request, json);
     }
@@ -200,8 +200,8 @@ public class JgController extends BaseController {
      */
     @RequestMapping("edit")
     @ResponseBody
-    @Log(module = "科研机构", desc = "添加科研机构", optType = Constants.OptType.EDIT)
-    public ResponseEntity<CusResponseBody> editXm(HttpServletRequest request,
+    @Log(module = "科研机构", desc = "编辑科研机构", optType = Constants.OptType.EDIT)
+    public ResponseEntity<CusResponseBody> edit(HttpServletRequest request,
                                                   @RequestBody JSONObject json) {
         return ae(request, json);
     }

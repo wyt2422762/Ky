@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/header::header(~{::title},~{},~{})">
+  <title>科研系统-添加纵向项目</title>
+</head>
+<body>
+<div style="padding: 20px;">
+  <form class="layui-form" method="post" id="xm_Form" lay-filter="xm_Form">
+    <div class="layui-form">
+      <table class="layui-table">
+        <tbody>
+        <tr>
+          <th>项目编号</th>
+          <td>
+            <input type="text" class="layui-input" name="no" lay-verify="required"/>
+          </td>
+          <th>项目名称</th>
+          <td>
+            <input type="text" class="layui-input" name="name" lay-verify="required"/>
+          </td>
+          <th>项目状态</th>
+          <td>
+            <select name="remark" lay-filter="remark" lay-verify="required">
+              <option value="" selected>请选择项目状态</option>
+              <option th:each="zd,stat:${dict_xmzt}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+          <th>所属学院</th>
+          <td>
+            <select name="fk_xyid" >
+              <option value="">请选择学院</option>
+              <option th:each="xy,stat:${xyList}" th:value="${xy.id}"
+                      th:text="${xy.name}"></option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>负责人</th>
+          <td>
+            <input type="text" class="layui-input" name="fzr" lay-verify="required"/>
+          </td>
+          <th>负责人类型</th>
+          <td>
+            <select name="fzrlx" lay-filter="fzrlx" lay-verify="required">
+              <option value="" selected>请选择负责人类型</option>
+              <option th:each="zd,stat:${dict_fzrlx}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+          <th>项目级别</th>
+          <td>
+            <select name="level" lay-filter="level" lay-verify="required">
+              <option value="" selected>请选择项目级别</option>
+              <option th:each="zd,stat:${dict_xmjb}" th:value="${zd.zdz}"
+                      th:text="${zd.zdm}"></option>
+            </select>
+          </td>
+          <th>成果形式</th>
+          <td>
+            <input type="text" class="layui-input" name="cgxs" />
+          </td>
+        </tr>
+        <tr>
+          <th>立项日期</th>
+          <td>
+            <input type="text" readonly class="layui-input" name="lxrq" id="lxrq" />
+          </td>
+          <th>开始日期</th>
+          <td>
+            <input type="text" readonly class="layui-input" name="ksrq" id="ksrq" />
+          </td>
+          <th>计划结项日期</th>
+          <td>
+            <input type="text" readonly class="layui-input" name="jhjxrq" id="jhjxrq" />
+          </td>
+          <th>实际结项日期</th>
+          <td>
+            <input type="text" readonly class="layui-input" name="sjjxrq" id="sjjxrq" />
+          </td>
+        </tr>
+        <tr>
+          <th>预算(万元)</th>
+          <td>
+            <input type="number" class="layui-input" name="ys" />
+          </td>
+          <th>批准经费(万元)</th>
+          <td>
+            <input type="number" class="layui-input" name="pzjf" />
+          </td>
+          <th>配套经费(万元)</th>
+          <td>
+            <input type="number" class="layui-input" name="ptjf" />
+          </td>
+          <th>外拨经费(万元)</th>
+          <td>
+            <input type="number" class="layui-input" name="wbjf" />
+          </td>
+        </tr>
+        <tr>
+          <th>批准号</th>
+          <td>
+            <input type="text" class="layui-input" name="pzh" />
+          </td>
+          <th>项目类型</th>
+          <td>
+            <input type="text" class="layui-input" name="type" />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="sb" lay-submit lay-filter="xm_Form" style="display: none;">提交</button>
+  </form>
+</div>
+
+<div th:replace="/common/footer::footer()"></div>
+
+<script type="text/javascript" th:src="@{/static/js/ky/xm/zxxm/xm.js}"></script>
+
+<script th:inline="javascript">
+  const cuser = [[${cuser}]];
+
+  layui.config({
+    base: ctx + 'static/js/layuiExts/'
+  }).use(['element', 'laydate', 'table', 'form', 'upload'], function () {
+    let element = layui.element;
+    let laydate = layui.laydate;
+    let form = layui.form;
+    let table = layui.table;
+    let layedit = layui.layedit;
+    let upload = layui.upload;
+
+    laydate.render({
+      elem: '#lxrq', type: 'date'
+    });
+    laydate.render({
+      elem: '#ksrq', type: 'date'
+    });
+    laydate.render({
+      elem: '#jhjxrq', type: 'date'
+    });
+    laydate.render({
+      elem: '#sjjxrq', type: 'date'
+    });
+
+    //表单提交
+    form.on('submit(xm_Form)', function (data) {
+      let zxxm = {};
+      for (let key in data.field) {
+        let val = data.field[key];
+        if (val) {
+          zxxm[key] = val;
+        }
+      }
+
+      debugger;
+
+      let indexout = top.layer.getFrameIndex(window.name); //获取窗口索引
+
+      ZXXM.add(zxxm, function () {
+        debugger;
+        top.layer.close(indexout); //关闭弹出框
+        TAB.refreshLayerOpen();
+        return false;
+      });
+
+      return false;
+    });
+
+  });
+</script>
+
+</body>
+</html>
